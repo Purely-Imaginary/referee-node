@@ -20,15 +20,15 @@ const userSchema = new mongoose_1.default.Schema({
         gender: String,
         location: String,
         website: String,
-        picture: String
-    }
+        picture: String,
+    },
 }, { timestamps: true });
 /**
  * Password hash middleware.
  */
-userSchema.pre("save", function save(next) {
+userSchema.pre('save', function save(next) {
     const user = this;
-    if (!user.isModified("password")) {
+    if (!user.isModified('password')) {
         return next();
     }
     bcrypt_nodejs_1.default.genSalt(10, (err, salt) => {
@@ -57,8 +57,8 @@ userSchema.methods.gravatar = function (size = 200) {
     if (!this.email) {
         return `https://gravatar.com/avatar/?s=${size}&d=retro`;
     }
-    const md5 = crypto_1.default.createHash("md5").update(this.email).digest("hex");
+    const md5 = crypto_1.default.createHash('md5').update(this.email).digest('hex');
     return `https://gravatar.com/avatar/${md5}?s=${size}&d=retro`;
 };
-exports.User = mongoose_1.default.model("User", userSchema);
+exports.User = mongoose_1.default.model('User', userSchema);
 //# sourceMappingURL=User.js.map
