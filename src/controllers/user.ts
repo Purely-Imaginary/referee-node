@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { Response } from 'express';
 import { MongoClient } from 'mongodb';
 
@@ -5,20 +6,18 @@ import { MongoClient } from 'mongodb';
  * GET /user/get/matches
  * Testing endpoint
  */
-const getMatches = (_req: Request, res: Response) => {
+export const getMatches = async (_req: Request, res: Response) => {
   const url = 'mongodb://localhost/referee';
-  const result: any[] = [];
-  MongoClient.connect(url, (_err: any, client: any) => {
+
+  MongoClient.connect(url, async (_err: any, client: any) => {
     const db = client.db('referee');
     const matchesCollection = db.collection('matches');
     let cursor = matchesCollection.find({ league: 'OB2' });
     cursor = matchesCollection.find({ 'team1.player1.id': 0 });
+    const result = await cursor.toArray();
 
-    cursor.each((__err: any, doc: any) => {
-      result.push(JSON.stringify(doc));
-    });
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(result));
+    return 0;
   });
-  res.render('matchList', { results: JSON.stringify(result) });
 };
-
-export { getMatches as default };
