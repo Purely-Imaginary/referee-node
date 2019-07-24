@@ -10,13 +10,15 @@ import path from 'path';
 import mongoose from 'mongoose';
 import passport from 'passport';
 import bluebird from 'bluebird';
+import cors from 'cors';
+
 import { MONGODB_URI, SESSION_SECRET } from './util/secrets';
 
 // Controllers (route handlers)
 import * as homeController from './controllers/home';
 import * as userController from './controllers/user';
 import * as apiController from './controllers/api';
-import * as contactController from './controllers/contact';
+import * as rankingController from './controllers/ranking';
 
 
 // API keys and Passport configuration
@@ -25,6 +27,7 @@ import * as passportConfig from './config/passport';
 const MongoStore = mongo(session);
 
 // Create Express server
+
 const app = express();
 
 // Connect to MongoDB
@@ -37,6 +40,24 @@ mongoose.connect(mongoUrl, { useNewUrlParser: true }).then(
   console.log(`MongoDB connection error. Please make sure MongoDB is running. ${err}`);
   // process.exit();
 });
+
+
+// app.user(bodyParser.json());
+// after the code that uses bodyParser and other cool stuff
+const originsWhitelist = [
+  'http://localhost:4200', // this is my front-end url for development
+  'localhost:4200', // this is my front-end url for development
+  'http://www.myproductionurl.com',
+];
+const corsOptions = {
+  origin(origin, callback) {
+    const isWhitelisted = originsWhitelist.indexOf(origin) !== -1;
+    callback(null, isWhitelisted);
+  },
+  credentials: true,
+};
+// here is the magic
+app.use(cors(corsOptions));
 
 // Express configuration
 app.set('port', process.env.PORT || 3000);
@@ -104,6 +125,8 @@ app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRe
 /**
  * My routes
  */
-app.get('/user/get/matches', userController.getMatches);
+app.get('/user/:id/getMatches', userController.getMatches);
+app.get('/ranking', rankingController.getRanking);
+
 
 export default app;

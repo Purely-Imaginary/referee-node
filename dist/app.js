@@ -21,11 +21,13 @@ const path_1 = __importDefault(require("path"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const passport_1 = __importDefault(require("passport"));
 const bluebird_1 = __importDefault(require("bluebird"));
+const cors_1 = __importDefault(require("cors"));
 const secrets_1 = require("./util/secrets");
 // Controllers (route handlers)
 const homeController = __importStar(require("./controllers/home"));
 const userController = __importStar(require("./controllers/user"));
 const apiController = __importStar(require("./controllers/api"));
+const rankingController = __importStar(require("./controllers/ranking"));
 // API keys and Passport configuration
 const passportConfig = __importStar(require("./config/passport"));
 const MongoStore = connect_mongo_1.default(express_session_1.default);
@@ -38,6 +40,22 @@ mongoose_1.default.connect(mongoUrl, { useNewUrlParser: true }).then(() => { }).
     console.log(`MongoDB connection error. Please make sure MongoDB is running. ${err}`);
     // process.exit();
 });
+// app.user(bodyParser.json());
+// after the code that uses bodyParser and other cool stuff
+const originsWhitelist = [
+    'http://localhost:4200',
+    'localhost:4200',
+    'http://www.myproductionurl.com',
+];
+const corsOptions = {
+    origin(origin, callback) {
+        const isWhitelisted = originsWhitelist.indexOf(origin) !== -1;
+        callback(null, isWhitelisted);
+    },
+    credentials: true,
+};
+// here is the magic
+app.use(cors_1.default(corsOptions));
 // Express configuration
 app.set('port', process.env.PORT || 3000);
 app.set('views', path_1.default.join(__dirname, '../views'));
@@ -98,6 +116,7 @@ app.get('/auth/facebook/callback', passport_1.default.authenticate('facebook', {
 /**
  * My routes
  */
-app.get('/user/get/matches', userController.getMatches);
+app.get('/user/:id/getMatches', userController.getMatches);
+app.get('/ranking', rankingController.getRanking);
 exports.default = app;
 //# sourceMappingURL=app.js.map
