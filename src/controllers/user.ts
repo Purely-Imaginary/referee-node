@@ -6,7 +6,7 @@ import { MongoClient } from 'mongodb';
  * GET /user/get/matches
  * Testing endpoint
  */
-export const getMatches = async (req: Request, res: Response) => {
+export const getMatches = (req: Request, res: Response) => {
   const url = 'mongodb://localhost/referee';
 
   MongoClient.connect(url, async (_err: any, client: any) => {

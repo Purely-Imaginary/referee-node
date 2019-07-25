@@ -26,4 +26,16 @@ exports.getLastMatches = (req, res) => {
         return 0;
     }));
 };
+exports.getAllMatches = (req, res) => {
+    const url = 'mongodb://localhost/referee';
+    mongodb_1.MongoClient.connect(url, (_err, client) => __awaiter(this, void 0, void 0, function* () {
+        const db = client.db('referee');
+        const matchesCollection = db.collection('matches');
+        const cursor = matchesCollection.find().sort({ date: -1, time: -1 });
+        const result = yield cursor.toArray();
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(result));
+        return 0;
+    }));
+};
 //# sourceMappingURL=matches.js.map

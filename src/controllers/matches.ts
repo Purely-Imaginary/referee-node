@@ -20,3 +20,16 @@ export const getLastMatches = (req: Request, res: Response) => {
     return 0;
   });
 };
+export const getAllMatches = (req: Request, res: Response) => {
+  const url = 'mongodb://localhost/referee';
+  MongoClient.connect(url, async (_err: any, client: any) => {
+    const db = client.db('referee');
+    const matchesCollection = db.collection('matches');
+    const cursor = matchesCollection.find().sort({ date: -1, time: -1 });
+    const result = await cursor.toArray();
+
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(result));
+    return 0;
+  });
+};

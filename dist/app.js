@@ -120,5 +120,6 @@ app.get('/auth/facebook/callback', passport_1.default.authenticate('facebook', {
 app.get('/user/:id/getMatches', userController.getMatches);
 app.get('/lastMatches/:amount', matchesController.getLastMatches);
 app.get('/ranking', rankingController.getRanking);
+app.get('/allMatches', matchesController.getAllMatches);
 exports.default = app;
 //# sourceMappingURL=app.js.map

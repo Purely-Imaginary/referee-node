@@ -13,7 +13,7 @@ const mongodb_1 = require("mongodb");
  * GET /user/get/matches
  * Testing endpoint
  */
-exports.getMatches = (req, res) => __awaiter(this, void 0, void 0, function* () {
+exports.getMatches = (req, res) => {
     const url = 'mongodb://localhost/referee';
     mongodb_1.MongoClient.connect(url, (_err, client) => __awaiter(this, void 0, void 0, function* () {
         const db = client.db('referee');
@@ -27,5 +27,5 @@ exports.getMatches = (req, res) => __awaiter(this, void 0, void 0, function* () 
         res.end(JSON.stringify(result));
         return 0;
     }));
-});
+};
 //# sourceMappingURL=user.js.map
