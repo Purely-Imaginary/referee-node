@@ -9,13 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongodb_1 = require("mongodb");
+const secrets_1 = require("../secrets");
 /**
  * GET /user/get/matches
  * Testing endpoint
  */
 exports.getMatches = (req, res) => {
-    const url = 'mongodb://localhost/referee';
-    mongodb_1.MongoClient.connect(url, (_err, client) => __awaiter(this, void 0, void 0, function* () {
+    mongodb_1.MongoClient.connect(secrets_1.mongoUrl, (_err, client) => __awaiter(this, void 0, void 0, function* () {
         const db = client.db('referee');
         const matchesCollection = db.collection('matches');
         const cursor = matchesCollection.find({ 'team1.player1.id': req.query.id });

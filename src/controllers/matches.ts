@@ -1,15 +1,15 @@
 /* eslint-disable import/prefer-default-export */
 import { Request, Response } from 'express';
 import { MongoClient } from 'mongodb';
+import { mongoUrl } from '../secrets';
 
 /**
  * GET /ranking
  * User ranking.
  */
 export const getLastMatches = (req: Request, res: Response) => {
-  const url = 'mongodb://localhost/referee';
   const amount = parseInt(req.params.amount, 10);
-  MongoClient.connect(url, async (_err: any, client: any) => {
+  MongoClient.connect(mongoUrl, async (_err: any, client: any) => {
     const db = client.db('referee');
     const matchesCollection = db.collection('matches');
     const cursor = matchesCollection.find().sort({ date: -1, time: -1 }).limit(amount);
@@ -21,8 +21,7 @@ export const getLastMatches = (req: Request, res: Response) => {
   });
 };
 export const getAllMatches = (req: Request, res: Response) => {
-  const url = 'mongodb://localhost/referee';
-  MongoClient.connect(url, async (_err: any, client: any) => {
+  MongoClient.connect(mongoUrl, async (_err: any, client: any) => {
     const db = client.db('referee');
     const matchesCollection = db.collection('matches');
     const cursor = matchesCollection.find().sort({ date: -1, time: -1 });
@@ -35,7 +34,6 @@ export const getAllMatches = (req: Request, res: Response) => {
 };
 
 export const getMatchesFromLastDays = (req: Request, res: Response) => {
-  const url = 'mongodb://localhost/referee';
   const amountOfDays = parseInt(req.params.amount, 10);
   const days:any = [];
   for (let i = 0; i < amountOfDays; i += 1) {
@@ -47,7 +45,7 @@ export const getMatchesFromLastDays = (req: Request, res: Response) => {
     days.push(dateString);
   }
 
-  MongoClient.connect(url, async (_err: any, client: any) => {
+  MongoClient.connect(mongoUrl, async (_err: any, client: any) => {
     const db = client.db('referee');
     const matchesCollection = db.collection('matches');
     const cursor = matchesCollection.find({ date: { $in: days } }).sort({ date: -1, time: -1 });

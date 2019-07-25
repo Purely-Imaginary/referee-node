@@ -1,15 +1,14 @@
 /* eslint-disable import/prefer-default-export */
 import { Request, Response } from 'express';
 import { MongoClient } from 'mongodb';
+import { mongoUrl } from '../secrets';
 
 /**
  * GET /user/get/matches
  * Testing endpoint
  */
 export const getMatches = (req: Request, res: Response) => {
-  const url = 'mongodb://localhost/referee';
-
-  MongoClient.connect(url, async (_err: any, client: any) => {
+  MongoClient.connect(mongoUrl, async (_err: any, client: any) => {
     const db = client.db('referee');
     const matchesCollection = db.collection('matches');
     const cursor = matchesCollection.find({ 'team1.player1.id': req.query.id });

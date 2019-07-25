@@ -20,6 +20,7 @@ import * as userController from './controllers/user';
 import * as apiController from './controllers/api';
 import * as rankingController from './controllers/ranking';
 import * as matchesController from './controllers/matches';
+import * as toolsController from './controllers/tools';
 
 
 // API keys and Passport configuration
@@ -131,6 +132,7 @@ app.get('/lastMatches/:amount', matchesController.getLastMatches);
 app.get('/getMatchesFromLastDays/:amount', matchesController.getMatchesFromLastDays);
 app.get('/ranking', rankingController.getRanking);
 app.get('/allMatches', matchesController.getAllMatches);
+app.get('/insertDataToDBFromSpreadsheet', toolsController.insertDataToDBFromSpreadsheet);
 
 
 export default app;
