@@ -19,6 +19,7 @@ import * as homeController from './controllers/home';
 import * as userController from './controllers/user';
 import * as apiController from './controllers/api';
 import * as rankingController from './controllers/ranking';
+import * as matchesController from './controllers/matches';
 
 
 // API keys and Passport configuration
@@ -126,6 +127,7 @@ app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRe
  * My routes
  */
 app.get('/user/:id/getMatches', userController.getMatches);
+app.get('/lastMatches/:amount', matchesController.getLastMatches);
 app.get('/ranking', rankingController.getRanking);
 
 

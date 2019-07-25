@@ -28,6 +28,7 @@ const homeController = __importStar(require("./controllers/home"));
 const userController = __importStar(require("./controllers/user"));
 const apiController = __importStar(require("./controllers/api"));
 const rankingController = __importStar(require("./controllers/ranking"));
+const matchesController = __importStar(require("./controllers/matches"));
 // API keys and Passport configuration
 const passportConfig = __importStar(require("./config/passport"));
 const MongoStore = connect_mongo_1.default(express_session_1.default);
@@ -117,6 +118,7 @@ app.get('/auth/facebook/callback', passport_1.default.authenticate('facebook', {
  * My routes
  */
 app.get('/user/:id/getMatches', userController.getMatches);
+app.get('/lastMatches/:amount', matchesController.getLastMatches);
 app.get('/ranking', rankingController.getRanking);
 exports.default = app;
 //# sourceMappingURL=app.js.map
