@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { MongoClient } from 'mongodb';
 
 /**
