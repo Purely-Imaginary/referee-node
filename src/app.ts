@@ -128,6 +128,7 @@ app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRe
  */
 app.get('/user/:id/getMatches', userController.getMatches);
 app.get('/lastMatches/:amount', matchesController.getLastMatches);
+app.get('/getMatchesFromLastDays/:amount', matchesController.getMatchesFromLastDays);
 app.get('/ranking', rankingController.getRanking);
 app.get('/allMatches', matchesController.getAllMatches);
 
