@@ -134,6 +134,7 @@ app.get('/ranking', rankingController.getRanking);
 app.get('/allMatches', matchesController.getAllMatches);
 app.get('/insertDataToDBFromSpreadsheet', toolsController.insertDataToDBFromSpreadsheet);
 app.get('/testingController', toolsController.testingController);
+app.get('/calculateMatches', toolsController.calculateMatches);
 
 
 export default app;

@@ -110,6 +110,11 @@ export default class CalculatedMatch {
     this.player12.changeRating(playersDB, this.ratingChange);
     this.player21.changeRating(playersDB, -this.ratingChange);
     this.player22.changeRating(playersDB, -this.ratingChange);
+
+    [this.player11, this.player12, this.player21, this.player22].forEach((player: Player) => {
+      player.updateTime(playersDB, this.timestamp);
+    });
+
     if (this.score1 > this.score2) {
       playersDB.updateMany(
         {

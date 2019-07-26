@@ -11,6 +11,8 @@ export default class Player {
 
   skirmishes: [];
 
+  lastPlayed: number;
+
   wins: number;
 
   losses: number;
@@ -26,6 +28,7 @@ export default class Player {
     this.matches = [];
     this.progress = [];
     this.skirmishes = [];
+    this.lastPlayed = 0;
     this.wins = wins;
     this.losses = losses;
     this.goalsScored = goalsScored;
@@ -60,6 +63,20 @@ export default class Player {
         $inc:
             {
               presentRating: changeValue,
+            },
+      },
+    );
+  }
+
+  async updateTime(playerCollection: any, matchTime: number) {
+    await playerCollection.update(
+      {
+        name: this.name,
+      },
+      {
+        $set:
+            {
+              lastPlayed: matchTime,
             },
       },
     );

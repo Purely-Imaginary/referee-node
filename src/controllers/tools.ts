@@ -58,17 +58,14 @@ export const getDataFromSpreadsheet = () => new Promise(((resolve, _reject) => {
 }
 ));
 
-export const insertDataToDBFromSpreadsheet = async () => {
+export const insertDataToDBFromSpreadsheet = async (db) => {
   const value = await getDataFromSpreadsheet();
-  MongoClient.connect(mongoUrl, async (_err: any, client: any) => {
-    const db = client.db('referee');
-    try {
-      await db.collection('rawMatches').drop();
-      await db.createCollection('rawMatches');
-    } catch {}
-    const matchesCollection = db.collection('rawMatches');
-    matchesCollection.insertMany(value, (__err, response) => response.insertedCount);
-  });
+  try {
+    await db.collection('rawMatches').drop();
+    await db.createCollection('rawMatches');
+  } catch {}
+  const matchesCollection = db.collection('rawMatches');
+  await matchesCollection.insertMany(value);
 };
 
 function containsPlayer(name: string, array: Player[]) {
@@ -80,32 +77,29 @@ function containsPlayer(name: string, array: Player[]) {
   return false;
 }
 
-export const generatePlayersFromRawMatches = async () => {
-  await MongoClient.connect(mongoUrl, async (_err: any, client: any) => {
-    const db = client.db('referee');
-    const matchesDB = db.collection('rawMatches').find().sort({ date: 1, time: 1 });
-    const matchesData = await matchesDB.toArray();
-    const playerList: Player[] = [];
-    let id = 0;
-    try {
-      await db.dropCollection('players');
-      await db.createCollection('players');
-    } catch {}
+export const generatePlayersFromRawMatches = async (db) => {
+  const matchesDB = db.collection('rawMatches').find().sort({ date: 1, time: 1 });
+  const matchesData = await matchesDB.toArray();
+  const playerList: Player[] = [];
+  let id = 0;
+  try {
+    await db.dropCollection('players');
+    await db.createCollection('players');
+  } catch {}
 
-    await matchesData.forEach(async (match) => {
-      const players = [match.player1, match.player2, match.player3, match.player4];
-      await players.forEach(async (playerName) => {
-        if (!containsPlayer(playerName, playerList)) {
-          const playerObject = new Player(id, playerName, 0, 0, 0, 0, 1000);
-          playerList.push(playerObject);
-          id += 1;
-        }
-      });
+  await matchesData.forEach(async (match) => {
+    const players = [match.player1, match.player2, match.player3, match.player4];
+    await players.forEach(async (playerName) => {
+      if (!containsPlayer(playerName, playerList)) {
+        const playerObject = new Player(id, playerName, 0, 0, 0, 0, 1000);
+        await playerList.push(playerObject);
+        id += 1;
+      }
     });
+  });
 
-    playerList.forEach((player: Player) => {
-      player.insertToDB(db.collection('players'));
-    });
+  await playerList.forEach(async (player: Player) => {
+    await player.insertToDB(db.collection('players'));
   });
 };
 
@@ -115,11 +109,12 @@ async function asyncForEach(array, callback) {
   }
 }
 
-export const calculateMatches = async () => {
+export const calculateMatches = async (req: Request, res: Response) => {
   const startTime = new Date();
-  await generatePlayersFromRawMatches();
   await MongoClient.connect(mongoUrl, async (_err: any, client: any) => {
     const db = client.db('referee');
+    const insertedMatches = await insertDataToDBFromSpreadsheet(db);
+    await generatePlayersFromRawMatches(db);
     const matchesDB = db.collection('rawMatches').find().sort({ date: 1, time: 1 });
     const matchesData = await matchesDB.toArray();
     const playersDB = db.collection('players');
@@ -144,8 +139,12 @@ export const calculateMatches = async () => {
       );
       await cMatch.insertToDB(db.collection('calculatedMatch'));
       await cMatch.updatePlayers(playersDB);
-      const timeElapsed = (new Date().getTime() - startTime.getTime()) / 1000;
-      console.log(`${cMatch.date} - ${cMatch.time} - ${timeElapsed}`);
+    }));
+    const timeElapsed = (new Date().getTime() - startTime.getTime()) / 1000;
+    res.end(JSON.stringify({
+      matchesProcessed: matchesData.length,
+      insertedMatches,
+      timeElapsed,
     }));
   });
 };

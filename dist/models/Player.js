@@ -15,6 +15,7 @@ class Player {
         this.matches = [];
         this.progress = [];
         this.skirmishes = [];
+        this.lastPlayed = 0;
         this.wins = wins;
         this.losses = losses;
         this.goalsScored = goalsScored;
@@ -47,6 +48,17 @@ class Player {
             }, {
                 $inc: {
                     presentRating: changeValue,
+                },
+            });
+        });
+    }
+    updateTime(playerCollection, matchTime) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield playerCollection.update({
+                name: this.name,
+            }, {
+                $set: {
+                    lastPlayed: matchTime,
                 },
             });
         });
