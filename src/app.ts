@@ -133,6 +133,7 @@ app.get('/getMatchesFromLastDays/:amount', matchesController.getMatchesFromLastD
 app.get('/ranking', rankingController.getRanking);
 app.get('/allMatches', matchesController.getAllMatches);
 app.get('/insertDataToDBFromSpreadsheet', toolsController.insertDataToDBFromSpreadsheet);
+app.get('/testingController', toolsController.testingController);
 
 
 export default app;

@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 // import { User, UserType } from '../models/User';
 import { Request, Response, NextFunction } from 'express';
-import { User } from '../models/User';
+import { User } from '../models/Player';
 
 const LocalStrategy = passportLocal.Strategy;
 const FacebookStrategy = passportFacebook.Strategy;

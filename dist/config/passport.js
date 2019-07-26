@@ -7,14 +7,14 @@ const passport_1 = __importDefault(require("passport"));
 const passport_local_1 = __importDefault(require("passport-local"));
 const passport_facebook_1 = __importDefault(require("passport-facebook"));
 const lodash_1 = __importDefault(require("lodash"));
-const User_1 = require("../models/User");
+const Player_1 = require("../models/Player");
 const LocalStrategy = passport_local_1.default.Strategy;
 const FacebookStrategy = passport_facebook_1.default.Strategy;
 passport_1.default.serializeUser((user, done) => {
     done(undefined, user.id);
 });
 passport_1.default.deserializeUser((id, done) => {
-    User_1.User.findById(id, (err, user) => {
+    Player_1.User.findById(id, (err, user) => {
         done(err, user);
     });
 });
@@ -22,7 +22,7 @@ passport_1.default.deserializeUser((id, done) => {
  * Sign in using Email and Password.
  */
 passport_1.default.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
-    User_1.User.findOne({ email: email.toLowerCase() }, (err, user) => {
+    Player_1.User.findOne({ email: email.toLowerCase() }, (err, user) => {
         if (err) {
             return done(err);
         }
@@ -65,7 +65,7 @@ passport_1.default.use(new FacebookStrategy({
     passReqToCallback: true,
 }, (req, accessToken, refreshToken, profile, done) => {
     if (req.user) {
-        User_1.User.findOne({ facebook: profile.id }, (err, existingUser) => {
+        Player_1.User.findOne({ facebook: profile.id }, (err, existingUser) => {
             if (err) {
                 return done(err);
             }
@@ -74,7 +74,7 @@ passport_1.default.use(new FacebookStrategy({
                 done(err);
             }
             else {
-                User_1.User.findById(req.user.id, (err, user) => {
+                Player_1.User.findById(req.user.id, (err, user) => {
                     if (err) {
                         return done(err);
                     }
@@ -92,14 +92,14 @@ passport_1.default.use(new FacebookStrategy({
         });
     }
     else {
-        User_1.User.findOne({ facebook: profile.id }, (err, existingUser) => {
+        Player_1.User.findOne({ facebook: profile.id }, (err, existingUser) => {
             if (err) {
                 return done(err);
             }
             if (existingUser) {
                 return done(undefined, existingUser);
             }
-            User_1.User.findOne({ email: profile._json.email }, (err, existingEmailUser) => {
+            Player_1.User.findOne({ email: profile._json.email }, (err, existingEmailUser) => {
                 if (err) {
                     return done(err);
                 }
@@ -108,7 +108,7 @@ passport_1.default.use(new FacebookStrategy({
                     done(err);
                 }
                 else {
-                    const user = new User_1.User();
+                    const user = new Player_1.User();
                     user.email = profile._json.email;
                     user.facebook = profile.id;
                     user.tokens.push({ kind: 'facebook', accessToken });

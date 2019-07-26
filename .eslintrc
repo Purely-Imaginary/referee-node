@@ -12,6 +12,7 @@
       "warning",
       "always"
     ],
+    "import/no-unresolved": "warning",
     "quotes": [
       "warning",
       "double"

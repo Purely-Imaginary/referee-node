@@ -10,3 +10,6 @@
     sourceType: module
     ecmaFeatures: 
       modules: true
+  rules:
+    import/no-unresolved: off
+    no-unused-vars: warn
