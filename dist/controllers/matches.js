@@ -18,8 +18,8 @@ exports.getLastMatches = (req, res) => {
     const amount = parseInt(req.params.amount, 10);
     mongodb_1.MongoClient.connect(secrets_1.mongoUrl, (_err, client) => __awaiter(this, void 0, void 0, function* () {
         const db = client.db('referee');
-        const matchesCollection = db.collection('matches');
-        const cursor = matchesCollection.find().sort({ date: -1, time: -1 }).limit(amount);
+        const matchesCollection = db.collection('calculatedMatches');
+        const cursor = matchesCollection.find().sort({ timestamp: -1 }).limit(amount);
         const result = yield cursor.toArray();
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(result));
@@ -29,8 +29,8 @@ exports.getLastMatches = (req, res) => {
 exports.getAllMatches = (req, res) => {
     mongodb_1.MongoClient.connect(secrets_1.mongoUrl, (_err, client) => __awaiter(this, void 0, void 0, function* () {
         const db = client.db('referee');
-        const matchesCollection = db.collection('matches');
-        const cursor = matchesCollection.find().sort({ date: -1, time: -1 });
+        const matchesCollection = db.collection('calculatedMatches');
+        const cursor = matchesCollection.find().sort({ timestamp: -1 });
         const result = yield cursor.toArray();
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(result));
@@ -50,8 +50,8 @@ exports.getMatchesFromLastDays = (req, res) => {
     }
     mongodb_1.MongoClient.connect(secrets_1.mongoUrl, (_err, client) => __awaiter(this, void 0, void 0, function* () {
         const db = client.db('referee');
-        const matchesCollection = db.collection('matches');
-        const cursor = matchesCollection.find({ date: { $in: days } }).sort({ date: -1, time: -1 });
+        const matchesCollection = db.collection('calculatedMatches');
+        const cursor = matchesCollection.find({ date: { $in: days } }).sort({ timestamp: -1 });
         const result = yield cursor.toArray();
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(result));

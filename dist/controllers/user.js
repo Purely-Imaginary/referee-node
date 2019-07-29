@@ -17,7 +17,7 @@ const secrets_1 = require("../secrets");
 exports.getMatches = (req, res) => {
     mongodb_1.MongoClient.connect(secrets_1.mongoUrl, (_err, client) => __awaiter(this, void 0, void 0, function* () {
         const db = client.db('referee');
-        const matchesCollection = db.collection('matches');
+        const matchesCollection = db.collection('calculatedMatches');
         const cursor = matchesCollection.find({ 'team1.player1.id': req.query.id });
         const result = yield cursor.toArray();
         res.setHeader('Access-Control-Allow-Origin', '*');

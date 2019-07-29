@@ -91,9 +91,9 @@ export const generatePlayersFromRawMatches = async (db) => {
     const players = [match.player1, match.player2, match.player3, match.player4];
     await players.forEach(async (playerName) => {
       if (!containsPlayer(playerName, playerList)) {
+        id += 1;
         const playerObject = new Player(id, playerName, 0, 0, 0, 0, 1000);
         await playerList.push(playerObject);
-        id += 1;
       }
     });
   });
@@ -109,6 +109,14 @@ async function asyncForEach(array, callback) {
   }
 }
 
+async function updateLastDaysProgress(playersDB, matchesDB, days: number) {
+  const playersData = await playersDB.find().toArray();
+  playersData.forEach(async (player) => {
+    const playerObject = await Player.getPlayerByName(playersDB, player.name);
+    const playerProgress = await playerObject.updatePlayersProgressInTimespan(playersDB, matchesDB, days);
+  });
+}
+
 export const calculateMatches = async (req: Request, res: Response) => {
   const startTime = new Date();
   await MongoClient.connect(mongoUrl, async (_err: any, client: any) => {
@@ -118,11 +126,9 @@ export const calculateMatches = async (req: Request, res: Response) => {
     const matchesDB = db.collection('rawMatches').find().sort({ date: 1, time: 1 });
     const matchesData = await matchesDB.toArray();
     const playersDB = db.collection('players');
-    const playersData = await playersDB.find().toArray();
-    try {
-      await db.dropCollection('calculatedMatch');
-      await db.createCollection('calculatedMatch');
-    } catch {}
+
+    await db.dropCollection('calculatedMatches');
+    await db.createCollection('calculatedMatches');
 
     await asyncForEach(matchesData, (async (match) => {
       const cMatch = await new CalculatedMatch(
@@ -137,9 +143,11 @@ export const calculateMatches = async (req: Request, res: Response) => {
         parseInt(match.score2, 10),
         match.league,
       );
-      await cMatch.insertToDB(db.collection('calculatedMatch'));
+      await cMatch.insertToDB(db.collection('calculatedMatches'));
       await cMatch.updatePlayers(playersDB);
     }));
+    const calculatedMatchesDB = db.collection('calculatedMatches');
+    await updateLastDaysProgress(playersDB, calculatedMatchesDB, 7);
     const timeElapsed = (new Date().getTime() - startTime.getTime()) / 1000;
     res.end(JSON.stringify({
       matchesProcessed: matchesData.length,
@@ -150,7 +158,12 @@ export const calculateMatches = async (req: Request, res: Response) => {
 };
 
 export const testingController = async (req: Request, res: Response) => {
-  const value = await calculateMatches();
-  res.end(JSON.stringify(value));
-  return value;
+  await MongoClient.connect(mongoUrl, async (_err: any, client: any) => {
+    const db = client.db('referee');
+    const matchesDB = db.collection('calculatedMatches');
+    const playersDB = db.collection('players');
+    await updateLastDaysProgress(playersDB, matchesDB, 7);
+    res.end(JSON.stringify('a'));
+    return 0;
+  });
 };

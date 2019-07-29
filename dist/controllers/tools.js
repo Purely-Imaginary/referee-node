@@ -93,9 +93,9 @@ exports.generatePlayersFromRawMatches = (db) => __awaiter(this, void 0, void 0, 
         const players = [match.player1, match.player2, match.player3, match.player4];
         yield players.forEach((playerName) => __awaiter(this, void 0, void 0, function* () {
             if (!containsPlayer(playerName, playerList)) {
+                id += 1;
                 const playerObject = new Player_1.default(id, playerName, 0, 0, 0, 0, 1000);
                 yield playerList.push(playerObject);
-                id += 1;
             }
         }));
     }));
@@ -110,6 +110,15 @@ function asyncForEach(array, callback) {
         }
     });
 }
+function updateLastDaysProgress(playersDB, matchesDB, days) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const playersData = yield playersDB.find().toArray();
+        playersData.forEach((player) => __awaiter(this, void 0, void 0, function* () {
+            const playerObject = yield Player_1.default.getPlayerByName(playersDB, player.name);
+            const playerProgress = yield playerObject.updatePlayersProgressInTimespan(playersDB, matchesDB, days);
+        }));
+    });
+}
 exports.calculateMatches = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const startTime = new Date();
     yield mongodb_1.MongoClient.connect(secrets_1.mongoUrl, (_err, client) => __awaiter(this, void 0, void 0, function* () {
@@ -119,17 +128,15 @@ exports.calculateMatches = (req, res) => __awaiter(this, void 0, void 0, functio
         const matchesDB = db.collection('rawMatches').find().sort({ date: 1, time: 1 });
         const matchesData = yield matchesDB.toArray();
         const playersDB = db.collection('players');
-        const playersData = yield playersDB.find().toArray();
-        try {
-            yield db.dropCollection('calculatedMatch');
-            yield db.createCollection('calculatedMatch');
-        }
-        catch (_c) { }
+        yield db.dropCollection('calculatedMatches');
+        yield db.createCollection('calculatedMatches');
         yield asyncForEach(matchesData, ((match) => __awaiter(this, void 0, void 0, function* () {
             const cMatch = yield new CalculatedMatch_1.default(match.date, match.time, match.timestamp, yield Player_1.default.getPlayerByName(playersDB, match.player1), yield Player_1.default.getPlayerByName(playersDB, match.player2), yield Player_1.default.getPlayerByName(playersDB, match.player3), yield Player_1.default.getPlayerByName(playersDB, match.player4), parseInt(match.score1, 10), parseInt(match.score2, 10), match.league);
-            yield cMatch.insertToDB(db.collection('calculatedMatch'));
+            yield cMatch.insertToDB(db.collection('calculatedMatches'));
             yield cMatch.updatePlayers(playersDB);
         })));
+        const calculatedMatchesDB = db.collection('calculatedMatches');
+        yield updateLastDaysProgress(playersDB, calculatedMatchesDB, 7);
         const timeElapsed = (new Date().getTime() - startTime.getTime()) / 1000;
         res.end(JSON.stringify({
             matchesProcessed: matchesData.length,
@@ -139,8 +146,13 @@ exports.calculateMatches = (req, res) => __awaiter(this, void 0, void 0, functio
     }));
 });
 exports.testingController = (req, res) => __awaiter(this, void 0, void 0, function* () {
-    const value = yield exports.calculateMatches();
-    res.end(JSON.stringify(value));
-    return value;
+    yield mongodb_1.MongoClient.connect(secrets_1.mongoUrl, (_err, client) => __awaiter(this, void 0, void 0, function* () {
+        const db = client.db('referee');
+        const matchesDB = db.collection('calculatedMatches');
+        const playersDB = db.collection('players');
+        yield updateLastDaysProgress(playersDB, matchesDB, 7);
+        res.end(JSON.stringify('a'));
+        return 0;
+    }));
 });
 //# sourceMappingURL=tools.js.map

@@ -10,7 +10,7 @@ import { mongoUrl } from '../secrets';
 export const getMatches = (req: Request, res: Response) => {
   MongoClient.connect(mongoUrl, async (_err: any, client: any) => {
     const db = client.db('referee');
-    const matchesCollection = db.collection('matches');
+    const matchesCollection = db.collection('calculatedMatches');
     const cursor = matchesCollection.find({ 'team1.player1.id': req.query.id });
     const result = await cursor.toArray();
 

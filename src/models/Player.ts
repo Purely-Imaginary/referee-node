@@ -5,7 +5,7 @@ export default class Player {
 
   name: string;
 
-  matches: [];
+  matches: any[];
 
   progress: [];
 
@@ -80,6 +80,90 @@ export default class Player {
             },
       },
     );
+  }
+
+  async getPlayersMatches(matchesCollection: any) {
+    const dataTeam1 = await matchesCollection.find(
+      {
+        $or:
+            [
+              { 'team1.player1.id': this.id },
+              { 'team1.player2.id': this.id },
+            ],
+      },
+    );
+    const matches: any[] = [];
+    await dataTeam1.forEach((match) => {
+      if (match.team1.player1.id !== this.id) {
+        [match.team1.player1, match.team1.player2] = [match.team1.player2, match.team1.player1];
+      }
+      matches.push(match);
+    });
+    const dataTeam2 = await matchesCollection.find(
+      {
+        $or:
+            [
+              { 'team2.player1.id': this.id },
+              { 'team2.player2.id': this.id },
+            ],
+      },
+    );
+
+    await dataTeam2.forEach((match: any) => {
+      [match.team1, match.team2] = [match.team2, match.team1];
+      if (match.team1.player1.id !== this.id) {
+        [match.team1.player1, match.team1.player2] = [match.team1.player2, match.team1.player1];
+      }
+      matches.push(match);
+    });
+
+    this.matches = matches.sort((a:any, b:any) => ((a.timestamp > b.timestamp) ? 1 : -1));
+    return this;
+  }
+
+  static getRatingChangeFromMatchForPlayer(match: any, playerId: number) {
+    return (match.team1.player1.id === playerId || match.team1.player2.id === playerId)
+      ? match.team1.ratingChange : match.team2.ratingChange;
+  }
+
+  async updatePlayersProgressInTimespan(playerCollection: any, matchesCollection: any, days: number) {
+    const edgeDate = new Date(new Date().setDate(new Date().getDate() - days)).getTime();
+    const data = await matchesCollection.find(
+      {
+        $or:
+            [
+              { 'team1.player1.id': this.id },
+              { 'team1.player2.id': this.id },
+              { 'team2.player1.id': this.id },
+              { 'team2.player2.id': this.id },
+            ],
+        timestamp: {
+          $lt: edgeDate,
+        },
+      },
+    ).sort({ timestamp: -1 }).limit(1).toArray();
+    const DBMatch = data[0];
+    const pastPlayerData = [
+      DBMatch.team1.player1,
+      DBMatch.team1.player2,
+      DBMatch.team2.player1,
+      DBMatch.team2.player2,
+    ].filter(player => player.id === this.id)[0];
+    const pastRating = pastPlayerData.presentRating
+      + Player.getRatingChangeFromMatchForPlayer(DBMatch, this.id);
+
+    const eloChange = this.presentRating - pastRating;
+
+    await playerCollection.updateOne({
+      name: this.name,
+    },
+    {
+      $set:
+          {
+            ratingChange: eloChange,
+          },
+    });
+    return eloChange;
   }
 }
 

@@ -11,8 +11,8 @@ export const getLastMatches = (req: Request, res: Response) => {
   const amount = parseInt(req.params.amount, 10);
   MongoClient.connect(mongoUrl, async (_err: any, client: any) => {
     const db = client.db('referee');
-    const matchesCollection = db.collection('matches');
-    const cursor = matchesCollection.find().sort({ date: -1, time: -1 }).limit(amount);
+    const matchesCollection = db.collection('calculatedMatches');
+    const cursor = matchesCollection.find().sort({ timestamp: -1 }).limit(amount);
     const result = await cursor.toArray();
 
     res.setHeader('Content-Type', 'application/json');
@@ -23,8 +23,8 @@ export const getLastMatches = (req: Request, res: Response) => {
 export const getAllMatches = (req: Request, res: Response) => {
   MongoClient.connect(mongoUrl, async (_err: any, client: any) => {
     const db = client.db('referee');
-    const matchesCollection = db.collection('matches');
-    const cursor = matchesCollection.find().sort({ date: -1, time: -1 });
+    const matchesCollection = db.collection('calculatedMatches');
+    const cursor = matchesCollection.find().sort({ timestamp: -1 });
     const result = await cursor.toArray();
 
     res.setHeader('Content-Type', 'application/json');
@@ -47,8 +47,8 @@ export const getMatchesFromLastDays = (req: Request, res: Response) => {
 
   MongoClient.connect(mongoUrl, async (_err: any, client: any) => {
     const db = client.db('referee');
-    const matchesCollection = db.collection('matches');
-    const cursor = matchesCollection.find({ date: { $in: days } }).sort({ date: -1, time: -1 });
+    const matchesCollection = db.collection('calculatedMatches');
+    const cursor = matchesCollection.find({ date: { $in: days } }).sort({ timestamp: -1 });
     const result = await cursor.toArray();
 
     res.setHeader('Content-Type', 'application/json');
