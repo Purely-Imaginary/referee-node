@@ -1,4 +1,7 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-param-reassign */
 /* eslint-disable import/prefer-default-export */
+// eslint-disable-next-line no-unused-vars
 import { Request, Response } from 'express';
 import { MongoClient } from 'mongodb';
 import https from 'https';
@@ -13,7 +16,7 @@ import CalculatedMatch from '../models/CalculatedMatch';
  */
 
 
-export const getDataFromSpreadsheet = () => new Promise(((resolve, _reject) => {
+export const getDataFromSpreadsheet = () => new Promise(((resolve) => {
   let csvdata = '';
   https.get(spreadsheetURL2, (resp) => {
     // A chunk of data has been recieved.
@@ -23,7 +26,7 @@ export const getDataFromSpreadsheet = () => new Promise(((resolve, _reject) => {
 
     // The whole response has been received. Print out the result.
     resp.on('end', async () => {
-      const data: {} = Papa.parse(csvdata);
+      const data: Papa = Papa.parse(csvdata);
 
       const parsedData: any[] | {
         date: any; time: any; player1: any; player2: any;
@@ -60,10 +63,8 @@ export const getDataFromSpreadsheet = () => new Promise(((resolve, _reject) => {
 
 export const insertDataToDBFromSpreadsheet = async (db) => {
   const value = await getDataFromSpreadsheet();
-  try {
-    await db.collection('rawMatches').drop();
-    await db.createCollection('rawMatches');
-  } catch {}
+  await db.collection('rawMatches').drop();
+  await db.createCollection('rawMatches');
   const matchesCollection = db.collection('rawMatches');
   await matchesCollection.insertMany(value);
 };
@@ -82,10 +83,8 @@ export const generatePlayersFromRawMatches = async (db) => {
   const matchesData = await matchesDB.toArray();
   const playerList: Player[] = [];
   let id = 0;
-  try {
-    await db.dropCollection('players');
-    await db.createCollection('players');
-  } catch {}
+  await db.dropCollection('players');
+  await db.createCollection('players');
 
   await matchesData.forEach(async (match) => {
     const players = [match.player1, match.player2, match.player3, match.player4];
@@ -104,7 +103,7 @@ export const generatePlayersFromRawMatches = async (db) => {
 };
 
 async function asyncForEach(array, callback) {
-  for (let index = 0; index < array.length; index++) {
+  for (let index = 0; index < array.length; index += 1) {
     await callback(array[index], index, array);
   }
 }
@@ -113,7 +112,9 @@ async function updateLastDaysProgress(playersDB, matchesDB, days: number) {
   const playersData = await playersDB.find().toArray();
   playersData.forEach(async (player) => {
     const playerObject = await Player.getPlayerByName(playersDB, player.name);
-    const playerProgress = await playerObject.updatePlayersProgressInTimespan(playersDB, matchesDB, days);
+    await playerObject.updatePlayersProgressInTimespan(
+      playersDB, matchesDB, days,
+    );
   });
 }
 
@@ -130,6 +131,8 @@ export const calculateMatches = async (req: Request, res: Response) => {
     await db.dropCollection('calculatedMatches');
     await db.createCollection('calculatedMatches');
 
+    const calculatedMatchesDB = db.collection('calculatedMatches');
+
     await asyncForEach(matchesData, (async (match) => {
       const cMatch = await new CalculatedMatch(
         match.date,
@@ -145,8 +148,8 @@ export const calculateMatches = async (req: Request, res: Response) => {
       );
       await cMatch.insertToDB(db.collection('calculatedMatches'));
       await cMatch.updatePlayers(playersDB);
+      await cMatch.calculatePast(calculatedMatchesDB);
     }));
-    const calculatedMatchesDB = db.collection('calculatedMatches');
     await updateLastDaysProgress(playersDB, calculatedMatchesDB, 7);
     const timeElapsed = (new Date().getTime() - startTime.getTime()) / 1000;
     res.end(JSON.stringify({

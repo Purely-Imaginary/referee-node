@@ -120,8 +120,7 @@ class Player {
                 DBMatch.team2.player1,
                 DBMatch.team2.player2,
             ].filter(player => player.id === this.id)[0];
-            const pastRating = pastPlayerData.presentRating
-                + Player.getRatingChangeFromMatchForPlayer(DBMatch, this.id);
+            const pastRating = pastPlayerData.presentRating;
             const eloChange = this.presentRating - pastRating;
             yield playerCollection.updateOne({
                 name: this.name,

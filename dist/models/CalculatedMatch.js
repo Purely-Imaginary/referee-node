@@ -31,10 +31,13 @@ class CalculatedMatch {
         this.estimatedScoreForTeam1 = estimationForTeam1 * scoreCoefficient;
         this.estimatedScoreForTeam2 = estimationForTeam2 * scoreCoefficient;
         const estimatedScoreDifference = this.estimatedScoreForTeam1 - this.estimatedScoreForTeam2;
-        this.ratingChange = (CalculatedMatch.ratingChangeCoefficient / 20) * (scoreDifference - estimatedScoreDifference);
+        this.ratingChange = (CalculatedMatch.ratingChangeCoefficient / 20)
+            * (scoreDifference - estimatedScoreDifference);
     }
     insertToDB(calculatedMatchCollection) {
         return __awaiter(this, void 0, void 0, function* () {
+            const didTeam1Won = this.score1 > this.score2 ? 1 : 0;
+            const didTeam2Won = this.score1 < this.score2 ? 1 : 0;
             yield calculatedMatchCollection.insertOne({
                 date: this.date,
                 time: this.time,
@@ -44,14 +47,15 @@ class CalculatedMatch {
                     player1: {
                         id: this.player11.id,
                         name: this.player11.name,
-                        presentRating: this.player11.presentRating,
+                        presentRating: this.player11.presentRating + this.ratingChange,
                     },
                     player2: {
                         id: this.player12.id,
                         name: this.player12.name,
-                        presentRating: this.player12.presentRating,
+                        presentRating: this.player12.presentRating + this.ratingChange,
                     },
                     score: this.score1,
+                    isWon: didTeam1Won,
                     ratingChange: this.ratingChange,
                     estimatedScore: this.estimatedScoreForTeam1,
                 },
@@ -59,14 +63,15 @@ class CalculatedMatch {
                     player1: {
                         id: this.player21.id,
                         name: this.player21.name,
-                        presentRating: this.player21.presentRating,
+                        presentRating: this.player21.presentRating - this.ratingChange,
                     },
                     player2: {
                         id: this.player22.id,
                         name: this.player22.name,
-                        presentRating: this.player22.presentRating,
+                        presentRating: this.player22.presentRating - this.ratingChange,
                     },
                     score: this.score2,
+                    isWon: didTeam2Won,
                     ratingChange: -this.ratingChange,
                     estimatedScore: this.estimatedScoreForTeam2,
                 },
@@ -122,6 +127,31 @@ class CalculatedMatch {
                     { name: this.player22.name },
                 ],
             }, { $inc: { goalsScored: this.score2, goalsLost: this.score1 } });
+        });
+    }
+    calculatePast(matchesDB) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = matchesDB.aggregate([
+                {
+                    $match: {
+                        'team1.player1.name': this.player11.name,
+                        'team1.player2.name': this.player12.name,
+                        'team2.player1.name': this.player21.name,
+                        'team2.player2.name': this.player22.name,
+                    },
+                },
+                {
+                    $group: {
+                        _id: null,
+                        team1score: { $sum: '$team1.score' },
+                        team1wins: { $sum: '$team1.isWon' },
+                        team2score: { $sum: '$team2.score' },
+                        team2wins: { $sum: '$team2.isWon' },
+                    },
+                },
+            ]);
+            // TODO: same but for switched sides
+            const i = 0;
         });
     }
 }

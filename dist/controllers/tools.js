@@ -21,7 +21,7 @@ const CalculatedMatch_1 = __importDefault(require("../models/CalculatedMatch"));
  * GET /user/get/matches
  * Testing endpoint
  */
-exports.getDataFromSpreadsheet = () => new Promise(((resolve, _reject) => {
+exports.getDataFromSpreadsheet = () => new Promise(((resolve) => {
     let csvdata = '';
     https_1.default.get(secrets_1.spreadsheetURL2, (resp) => {
         // A chunk of data has been recieved.
@@ -63,11 +63,8 @@ exports.getDataFromSpreadsheet = () => new Promise(((resolve, _reject) => {
 }));
 exports.insertDataToDBFromSpreadsheet = (db) => __awaiter(this, void 0, void 0, function* () {
     const value = yield exports.getDataFromSpreadsheet();
-    try {
-        yield db.collection('rawMatches').drop();
-        yield db.createCollection('rawMatches');
-    }
-    catch (_a) { }
+    yield db.collection('rawMatches').drop();
+    yield db.createCollection('rawMatches');
     const matchesCollection = db.collection('rawMatches');
     yield matchesCollection.insertMany(value);
 });
@@ -84,11 +81,8 @@ exports.generatePlayersFromRawMatches = (db) => __awaiter(this, void 0, void 0, 
     const matchesData = yield matchesDB.toArray();
     const playerList = [];
     let id = 0;
-    try {
-        yield db.dropCollection('players');
-        yield db.createCollection('players');
-    }
-    catch (_b) { }
+    yield db.dropCollection('players');
+    yield db.createCollection('players');
     yield matchesData.forEach((match) => __awaiter(this, void 0, void 0, function* () {
         const players = [match.player1, match.player2, match.player3, match.player4];
         yield players.forEach((playerName) => __awaiter(this, void 0, void 0, function* () {
@@ -105,7 +99,7 @@ exports.generatePlayersFromRawMatches = (db) => __awaiter(this, void 0, void 0, 
 });
 function asyncForEach(array, callback) {
     return __awaiter(this, void 0, void 0, function* () {
-        for (let index = 0; index < array.length; index++) {
+        for (let index = 0; index < array.length; index += 1) {
             yield callback(array[index], index, array);
         }
     });
@@ -115,7 +109,7 @@ function updateLastDaysProgress(playersDB, matchesDB, days) {
         const playersData = yield playersDB.find().toArray();
         playersData.forEach((player) => __awaiter(this, void 0, void 0, function* () {
             const playerObject = yield Player_1.default.getPlayerByName(playersDB, player.name);
-            const playerProgress = yield playerObject.updatePlayersProgressInTimespan(playersDB, matchesDB, days);
+            yield playerObject.updatePlayersProgressInTimespan(playersDB, matchesDB, days);
         }));
     });
 }
@@ -130,12 +124,13 @@ exports.calculateMatches = (req, res) => __awaiter(this, void 0, void 0, functio
         const playersDB = db.collection('players');
         yield db.dropCollection('calculatedMatches');
         yield db.createCollection('calculatedMatches');
+        const calculatedMatchesDB = db.collection('calculatedMatches');
         yield asyncForEach(matchesData, ((match) => __awaiter(this, void 0, void 0, function* () {
             const cMatch = yield new CalculatedMatch_1.default(match.date, match.time, match.timestamp, yield Player_1.default.getPlayerByName(playersDB, match.player1), yield Player_1.default.getPlayerByName(playersDB, match.player2), yield Player_1.default.getPlayerByName(playersDB, match.player3), yield Player_1.default.getPlayerByName(playersDB, match.player4), parseInt(match.score1, 10), parseInt(match.score2, 10), match.league);
             yield cMatch.insertToDB(db.collection('calculatedMatches'));
             yield cMatch.updatePlayers(playersDB);
+            yield cMatch.calculatePast(calculatedMatchesDB);
         })));
-        const calculatedMatchesDB = db.collection('calculatedMatches');
         yield updateLastDaysProgress(playersDB, calculatedMatchesDB, 7);
         const timeElapsed = (new Date().getTime() - startTime.getTime()) / 1000;
         res.end(JSON.stringify({
