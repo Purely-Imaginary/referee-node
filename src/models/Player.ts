@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 export default class Player {
   presentRating: number;
 
@@ -126,7 +127,9 @@ export default class Player {
       ? match.team1.ratingChange : match.team2.ratingChange;
   }
 
-  async updatePlayersProgressInTimespan(playerCollection: any, matchesCollection: any, days: number) {
+  async updatePlayersProgressInTimespan(
+    playerCollection: any, matchesCollection: any, days: number,
+  ) {
     const edgeDate = new Date(new Date().setDate(new Date().getDate() - days)).getTime();
     const data = await matchesCollection.find(
       {
@@ -142,15 +145,17 @@ export default class Player {
         },
       },
     ).sort({ timestamp: -1 }).limit(1).toArray();
-    const DBMatch = data[0];
-    const pastPlayerData = [
-      DBMatch.team1.player1,
-      DBMatch.team1.player2,
-      DBMatch.team2.player1,
-      DBMatch.team2.player2,
-    ].filter(player => player.id === this.id)[0];
-    const pastRating = pastPlayerData.presentRating;
-
+    let pastRating = 1000;
+    if (data[0] !== undefined) {
+      const DBMatch = data[0];
+      const pastPlayerData = [
+        DBMatch.team1.player1,
+        DBMatch.team1.player2,
+        DBMatch.team2.player1,
+        DBMatch.team2.player2,
+      ].filter(player => player.id === this.id)[0];
+      pastRating = pastPlayerData.presentRating;
+    }
     const eloChange = this.presentRating - pastRating;
 
     await playerCollection.updateOne({

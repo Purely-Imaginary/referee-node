@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint-disable no-param-reassign */
 class Player {
     constructor(id, name, wins, losses, goalsScored, goalsLost, presentRating) {
         this.id = id;
@@ -113,14 +114,17 @@ class Player {
                     $lt: edgeDate,
                 },
             }).sort({ timestamp: -1 }).limit(1).toArray();
-            const DBMatch = data[0];
-            const pastPlayerData = [
-                DBMatch.team1.player1,
-                DBMatch.team1.player2,
-                DBMatch.team2.player1,
-                DBMatch.team2.player2,
-            ].filter(player => player.id === this.id)[0];
-            const pastRating = pastPlayerData.presentRating;
+            let pastRating = 1000;
+            if (data[0] !== undefined) {
+                const DBMatch = data[0];
+                const pastPlayerData = [
+                    DBMatch.team1.player1,
+                    DBMatch.team1.player2,
+                    DBMatch.team2.player1,
+                    DBMatch.team2.player2,
+                ].filter(player => player.id === this.id)[0];
+                pastRating = pastPlayerData.presentRating;
+            }
             const eloChange = this.presentRating - pastRating;
             yield playerCollection.updateOne({
                 name: this.name,

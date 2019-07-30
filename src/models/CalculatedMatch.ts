@@ -70,6 +70,7 @@ export default class CalculatedMatch {
   async insertToDB(calculatedMatchCollection: any) {
     const didTeam1Won = this.score1 > this.score2 ? 1 : 0;
     const didTeam2Won = this.score1 < this.score2 ? 1 : 0;
+    const pastData = await this.calculatePast(calculatedMatchCollection);
     await calculatedMatchCollection.insertOne({
       date: this.date,
       time: this.time,
@@ -90,6 +91,8 @@ export default class CalculatedMatch {
         isWon: didTeam1Won,
         ratingChange: this.ratingChange,
         estimatedScore: this.estimatedScoreForTeam1,
+        pastSummedScoreAgainstThisTeam: pastData.team1score + this.score1,
+        pastWinsAgainstThisTeam: pastData.team1wins + didTeam1Won,
       },
       team2: {
         player1: {
@@ -106,6 +109,8 @@ export default class CalculatedMatch {
         isWon: didTeam2Won,
         ratingChange: -this.ratingChange,
         estimatedScore: this.estimatedScoreForTeam2,
+        pastSummedScoreAgainstThisTeam: pastData.team2score + this.score2,
+        pastWinsAgainstThisTeam: pastData.team2wins + didTeam2Won,
       },
     });
   }
@@ -205,8 +210,55 @@ export default class CalculatedMatch {
         },
       },
     ]);
+    const temp1 = await data.toArray();
     // TODO: same but for switched sides
-    const i = 0;
+
+    const data2 = matchesDB.aggregate([
+      {
+        $match:
+        {
+          'team1.player1.name': this.player21.name,
+          'team1.player2.name': this.player22.name,
+          'team2.player1.name': this.player11.name,
+          'team2.player2.name': this.player12.name,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          team1score: { $sum: '$team1.score' },
+          team1wins: { $sum: '$team1.isWon' },
+          team2score: { $sum: '$team2.score' },
+          team2wins: { $sum: '$team2.isWon' },
+        },
+      },
+    ]);
+    const temp2 = await data2.toArray();
+
+    let team1score = 0;
+    let team1wins = 0;
+    let team2score = 0;
+    let team2wins = 0;
+
+    if (temp1[0] !== undefined) {
+      team1score += temp1[0].team1score;
+      team1wins += temp1[0].team1wins;
+      team2score += temp1[0].team2score;
+      team2wins += temp1[0].team2wins;
+    }
+    if (temp2[0] !== undefined) {
+      team1score += temp2[0].team2score;
+      team1wins += temp2[0].team2wins;
+      team2score += temp2[0].team1score;
+      team2wins += temp2[0].team1wins;
+    }
+
+    return {
+      team1score,
+      team1wins,
+      team2score,
+      team2wins,
+    };
   }
 }
 
