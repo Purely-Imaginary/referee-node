@@ -29,6 +29,12 @@ class Player {
             return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating);
         });
     }
+    static getPlayerById(playerCollection, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const p = yield playerCollection.findOne({ id });
+            return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating);
+        });
+    }
     insertToDB(playerCollection) {
         return __awaiter(this, void 0, void 0, function* () {
             yield playerCollection.insertOne({
@@ -100,6 +106,14 @@ class Player {
         return (match.team1.player1.id === playerId || match.team1.player2.id === playerId)
             ? match.team1.ratingChange : match.team2.ratingChange;
     }
+    static getRatingFromMatchForPlayer(match, playerId) {
+        return [
+            match.team1.player1,
+            match.team1.player2,
+            match.team2.player1,
+            match.team2.player2,
+        ].filter(player => player.id === playerId)[0].presentRating;
+    }
     updatePlayersProgressInTimespan(playerCollection, matchesCollection, days) {
         return __awaiter(this, void 0, void 0, function* () {
             const edgeDate = new Date(new Date().setDate(new Date().getDate() - days)).getTime();
@@ -134,6 +148,32 @@ class Player {
                 },
             });
             return eloChange;
+        });
+    }
+    getProgressFromMatches() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.progress.splice(0, this.progress.length); // clear the table
+            this.matches.forEach((match) => __awaiter(this, void 0, void 0, function* () {
+                if (this.progress.length === 0
+                    || (match.timestamp - this.progress[this.progress.length - 1].timestamp) > 43200000) {
+                    yield this.progress.push({
+                        timestamp: match.timestamp,
+                        rating: Player.getRatingFromMatchForPlayer(match, this.id),
+                    });
+                }
+            }));
+        });
+    }
+    getSkirmishesFromMatches() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.skirmishes.splice(0, this.skirmishes.length);
+        });
+    }
+    getFullData(matchesCollection) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.getPlayersMatches(matchesCollection);
+            yield this.getProgressFromMatches();
+            yield this.getSkirmishesFromMatches();
         });
     }
 }

@@ -21,6 +21,7 @@ import * as apiController from './controllers/api';
 import * as rankingController from './controllers/ranking';
 import * as matchesController from './controllers/matches';
 import * as toolsController from './controllers/tools';
+import * as playerController from './controllers/player';
 
 
 // API keys and Passport configuration
@@ -135,6 +136,7 @@ app.get('/allMatches', matchesController.getAllMatches);
 app.get('/insertDataToDBFromSpreadsheet', toolsController.insertDataToDBFromSpreadsheet);
 app.get('/testingController', toolsController.testingController);
 app.get('/calculateMatches', toolsController.calculateMatches);
+app.get('/player/:id', playerController.getPlayerData);
 
 
 export default app;

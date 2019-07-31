@@ -8,7 +8,7 @@ export default class Player {
 
   matches: any[];
 
-  progress: [];
+  progress: [{timestamp: number, rating: number}];
 
   skirmishes: [];
 
@@ -39,6 +39,12 @@ export default class Player {
 
   static async getPlayerByName(playerCollection: any, name: string) {
     const p = await playerCollection.findOne({ name });
+
+    return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating);
+  }
+
+  static async getPlayerById(playerCollection: any, id: number) {
+    const p = await playerCollection.findOne({ id });
 
     return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating);
   }
@@ -127,6 +133,15 @@ export default class Player {
       ? match.team1.ratingChange : match.team2.ratingChange;
   }
 
+  static getRatingFromMatchForPlayer(match: any, playerId: number) {
+    return [
+      match.team1.player1,
+      match.team1.player2,
+      match.team2.player1,
+      match.team2.player2,
+    ].filter(player => player.id === playerId)[0].presentRating;
+  }
+
   async updatePlayersProgressInTimespan(
     playerCollection: any, matchesCollection: any, days: number,
   ) {
@@ -168,6 +183,29 @@ export default class Player {
           },
     });
     return eloChange;
+  }
+
+  async getProgressFromMatches() {
+    this.progress.splice(0, this.progress.length); // clear the table
+    this.matches.forEach(async (match) => {
+      if (this.progress.length === 0
+        || (match.timestamp - this.progress[this.progress.length - 1].timestamp) > 43200000) {
+        await this.progress.push({
+          timestamp: match.timestamp,
+          rating: Player.getRatingFromMatchForPlayer(match, this.id),
+        });
+      }
+    });
+  }
+
+  async getSkirmishesFromMatches() {
+    this.skirmishes.splice(0, this.skirmishes.length);
+  }
+
+  async getFullData(matchesCollection: any) {
+    await this.getPlayersMatches(matchesCollection);
+    await this.getProgressFromMatches();
+    await this.getSkirmishesFromMatches();
   }
 }
 

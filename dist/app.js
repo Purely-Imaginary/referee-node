@@ -30,6 +30,7 @@ const apiController = __importStar(require("./controllers/api"));
 const rankingController = __importStar(require("./controllers/ranking"));
 const matchesController = __importStar(require("./controllers/matches"));
 const toolsController = __importStar(require("./controllers/tools"));
+const playerController = __importStar(require("./controllers/player"));
 // API keys and Passport configuration
 const passportConfig = __importStar(require("./config/passport"));
 const MongoStore = connect_mongo_1.default(express_session_1.default);
@@ -126,5 +127,6 @@ app.get('/allMatches', matchesController.getAllMatches);
 app.get('/insertDataToDBFromSpreadsheet', toolsController.insertDataToDBFromSpreadsheet);
 app.get('/testingController', toolsController.testingController);
 app.get('/calculateMatches', toolsController.calculateMatches);
+app.get('/player/:id', playerController.getPlayerData);
 exports.default = app;
 //# sourceMappingURL=app.js.map
