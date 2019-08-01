@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable no-param-reassign */
 class Player {
-    constructor(id, name, wins, losses, goalsScored, goalsLost, presentRating) {
+    constructor(id, name, wins, losses, goalsScored, goalsLost, presentRating, ratingChange) {
         this.id = id;
         this.name = name;
         this.matches = [];
@@ -22,17 +22,18 @@ class Player {
         this.goalsScored = goalsScored;
         this.goalsLost = goalsLost;
         this.presentRating = presentRating;
+        this.ratingChange = ratingChange;
     }
     static getPlayerByName(playerCollection, name) {
         return __awaiter(this, void 0, void 0, function* () {
             const p = yield playerCollection.findOne({ name });
-            return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating);
+            return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating, p.ratingChange);
         });
     }
     static getPlayerById(playerCollection, id) {
         return __awaiter(this, void 0, void 0, function* () {
             const p = yield playerCollection.findOne({ id });
-            return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating);
+            return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating, p.ratingChange);
         });
     }
     insertToDB(playerCollection) {

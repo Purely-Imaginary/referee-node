@@ -45,7 +45,9 @@ exports.getMatchesFromLastDays = (req, res) => {
         date.setDate(date.getDate() - i);
         let month = (date.getMonth() + 1).toString();
         month = month.length === 1 ? `0${month}` : month;
-        const dateString = `${date.getFullYear()}-${month}-${date.getDate()}`;
+        let day = (date.getDate()).toString();
+        day = day.length === 1 ? `0${day}` : day;
+        const dateString = `${date.getFullYear()}-${month}-${day}`;
         days.push(dateString);
     }
     mongodb_1.MongoClient.connect(secrets_1.mongoUrl, (_err, client) => __awaiter(this, void 0, void 0, function* () {

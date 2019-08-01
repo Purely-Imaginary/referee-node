@@ -125,11 +125,13 @@ exports.calculateMatches = (req, res) => __awaiter(this, void 0, void 0, functio
         yield db.dropCollection('calculatedMatches');
         yield db.createCollection('calculatedMatches');
         const calculatedMatchesDB = db.collection('calculatedMatches');
+        let lastParsedMatch = '';
         yield asyncForEach(matchesData, ((match) => __awaiter(this, void 0, void 0, function* () {
             const cMatch = yield new CalculatedMatch_1.default(match.date, match.time, match.timestamp, yield Player_1.default.getPlayerByName(playersDB, match.player1), yield Player_1.default.getPlayerByName(playersDB, match.player2), yield Player_1.default.getPlayerByName(playersDB, match.player3), yield Player_1.default.getPlayerByName(playersDB, match.player4), parseInt(match.score1, 10), parseInt(match.score2, 10), match.league);
             yield cMatch.insertToDB(db.collection('calculatedMatches'));
             yield cMatch.updatePlayers(playersDB);
             yield cMatch.calculatePast(calculatedMatchesDB);
+            lastParsedMatch = `${match.date} ${match.time}`;
         })));
         yield updateLastDaysProgress(playersDB, calculatedMatchesDB, 7);
         const timeElapsed = (new Date().getTime() - startTime.getTime()) / 1000;
@@ -137,6 +139,7 @@ exports.calculateMatches = (req, res) => __awaiter(this, void 0, void 0, functio
             matchesProcessed: matchesData.length,
             insertedMatches,
             timeElapsed,
+            lastParsedMatch,
         }));
     }));
 });

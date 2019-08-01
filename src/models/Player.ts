@@ -2,6 +2,8 @@
 export default class Player {
   presentRating: number;
 
+  ratingChange: number;
+
   id: number;
 
   name: string;
@@ -23,7 +25,7 @@ export default class Player {
   goalsLost: number;
 
   constructor(id: number, name: string, wins: number, losses: number,
-    goalsScored: number, goalsLost: number, presentRating: number) {
+    goalsScored: number, goalsLost: number, presentRating: number, ratingChange: number) {
     this.id = id;
     this.name = name;
     this.matches = [];
@@ -35,18 +37,19 @@ export default class Player {
     this.goalsScored = goalsScored;
     this.goalsLost = goalsLost;
     this.presentRating = presentRating;
+    this.ratingChange = ratingChange;
   }
 
   static async getPlayerByName(playerCollection: any, name: string) {
     const p = await playerCollection.findOne({ name });
 
-    return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating);
+    return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating, p.ratingChange);
   }
 
   static async getPlayerById(playerCollection: any, id: number) {
     const p = await playerCollection.findOne({ id });
 
-    return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating);
+    return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating, p.ratingChange);
   }
 
   async insertToDB(playerCollection: any) {

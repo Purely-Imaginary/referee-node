@@ -132,7 +132,7 @@ export const calculateMatches = async (req: Request, res: Response) => {
     await db.createCollection('calculatedMatches');
 
     const calculatedMatchesDB = db.collection('calculatedMatches');
-
+    let lastParsedMatch = '';
     await asyncForEach(matchesData, (async (match) => {
       const cMatch = await new CalculatedMatch(
         match.date,
@@ -149,6 +149,7 @@ export const calculateMatches = async (req: Request, res: Response) => {
       await cMatch.insertToDB(db.collection('calculatedMatches'));
       await cMatch.updatePlayers(playersDB);
       await cMatch.calculatePast(calculatedMatchesDB);
+      lastParsedMatch = `${match.date} ${match.time}`;
     }));
     await updateLastDaysProgress(playersDB, calculatedMatchesDB, 7);
     const timeElapsed = (new Date().getTime() - startTime.getTime()) / 1000;
@@ -156,6 +157,7 @@ export const calculateMatches = async (req: Request, res: Response) => {
       matchesProcessed: matchesData.length,
       insertedMatches,
       timeElapsed,
+      lastParsedMatch,
     }));
   });
 };
