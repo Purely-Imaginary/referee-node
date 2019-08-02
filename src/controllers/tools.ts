@@ -91,7 +91,7 @@ export const generatePlayersFromRawMatches = async (db) => {
     await players.forEach(async (playerName) => {
       if (!containsPlayer(playerName, playerList)) {
         id += 1;
-        const playerObject = new Player(id, playerName, 0, 0, 0, 0, 1000);
+        const playerObject = new Player(id, playerName, 0, 0, 0, 0, 1000, 0, 0);
         await playerList.push(playerObject);
       }
     });
@@ -116,6 +116,22 @@ async function updateLastDaysProgress(playersDB, matchesDB, days: number) {
       playersDB, matchesDB, days,
     );
   });
+}
+
+async function updateCurrentRank(playersDB) {
+  const playersData = await playersDB.find().sort({ presentRating: -1 }).toArray();
+  for (let index = 1; index <= playersData.length; index += 1) {
+    const player = playersData[index - 1];
+    playersDB.updateOne({
+      name: player.name,
+    },
+    {
+      $set:
+          {
+            currentRank: index,
+          },
+    });
+  }
 }
 
 export const calculateMatches = async (req: Request, res: Response) => {
@@ -152,6 +168,7 @@ export const calculateMatches = async (req: Request, res: Response) => {
       lastParsedMatch = `${match.date} ${match.time}`;
     }));
     await updateLastDaysProgress(playersDB, calculatedMatchesDB, 7);
+    await updateCurrentRank(playersDB);
     const timeElapsed = (new Date().getTime() - startTime.getTime()) / 1000;
     res.end(JSON.stringify({
       matchesProcessed: matchesData.length,

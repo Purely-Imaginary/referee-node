@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable no-param-reassign */
 class Player {
-    constructor(id, name, wins, losses, goalsScored, goalsLost, presentRating, ratingChange) {
+    constructor(id, name, wins, losses, goalsScored, goalsLost, presentRating, ratingChange, currentRank) {
         this.id = id;
         this.name = name;
         this.matches = [];
@@ -23,17 +23,18 @@ class Player {
         this.goalsLost = goalsLost;
         this.presentRating = presentRating;
         this.ratingChange = ratingChange;
+        this.currentRank = currentRank;
     }
     static getPlayerByName(playerCollection, name) {
         return __awaiter(this, void 0, void 0, function* () {
             const p = yield playerCollection.findOne({ name });
-            return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating, p.ratingChange);
+            return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating, p.ratingChange, p.currentRank);
         });
     }
     static getPlayerById(playerCollection, id) {
         return __awaiter(this, void 0, void 0, function* () {
             const p = yield playerCollection.findOne({ id });
-            return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating, p.ratingChange);
+            return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating, p.ratingChange, p.currentRank);
         });
     }
     insertToDB(playerCollection) {
@@ -155,13 +156,10 @@ class Player {
         return __awaiter(this, void 0, void 0, function* () {
             this.progress.splice(0, this.progress.length); // clear the table
             this.matches.forEach((match) => __awaiter(this, void 0, void 0, function* () {
-                if (this.progress.length === 0
-                    || (match.timestamp - this.progress[this.progress.length - 1].timestamp) > 43200000) {
-                    yield this.progress.push({
-                        timestamp: match.timestamp,
-                        rating: Player.getRatingFromMatchForPlayer(match, this.id),
-                    });
-                }
+                yield this.progress.push({
+                    timestamp: match.timestamp,
+                    rating: Player.getRatingFromMatchForPlayer(match, this.id),
+                });
             }));
         });
     }

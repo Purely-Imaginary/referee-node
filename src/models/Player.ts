@@ -4,6 +4,8 @@ export default class Player {
 
   ratingChange: number;
 
+  currentRank: number;
+
   id: number;
 
   name: string;
@@ -25,7 +27,7 @@ export default class Player {
   goalsLost: number;
 
   constructor(id: number, name: string, wins: number, losses: number,
-    goalsScored: number, goalsLost: number, presentRating: number, ratingChange: number) {
+    goalsScored: number, goalsLost: number, presentRating: number, ratingChange: number, currentRank: number) {
     this.id = id;
     this.name = name;
     this.matches = [];
@@ -38,18 +40,23 @@ export default class Player {
     this.goalsLost = goalsLost;
     this.presentRating = presentRating;
     this.ratingChange = ratingChange;
+    this.currentRank = currentRank;
   }
 
   static async getPlayerByName(playerCollection: any, name: string) {
     const p = await playerCollection.findOne({ name });
 
-    return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating, p.ratingChange);
+    return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored,
+      p.goalsLost, p.presentRating, p.ratingChange,
+      p.currentRank);
   }
 
   static async getPlayerById(playerCollection: any, id: number) {
     const p = await playerCollection.findOne({ id });
 
-    return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored, p.goalsLost, p.presentRating, p.ratingChange);
+    return new Player(p.id, p.name, p.wins, p.losses, p.goalsScored,
+      p.goalsLost, p.presentRating, p.ratingChange,
+      p.currentRank);
   }
 
   async insertToDB(playerCollection: any) {
@@ -191,13 +198,10 @@ export default class Player {
   async getProgressFromMatches() {
     this.progress.splice(0, this.progress.length); // clear the table
     this.matches.forEach(async (match) => {
-      if (this.progress.length === 0
-        || (match.timestamp - this.progress[this.progress.length - 1].timestamp) > 43200000) {
-        await this.progress.push({
-          timestamp: match.timestamp,
-          rating: Player.getRatingFromMatchForPlayer(match, this.id),
-        });
-      }
+      await this.progress.push({
+        timestamp: match.timestamp,
+        rating: Player.getRatingFromMatchForPlayer(match, this.id),
+      });
     });
   }
 

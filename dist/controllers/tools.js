@@ -88,7 +88,7 @@ exports.generatePlayersFromRawMatches = (db) => __awaiter(this, void 0, void 0, 
         yield players.forEach((playerName) => __awaiter(this, void 0, void 0, function* () {
             if (!containsPlayer(playerName, playerList)) {
                 id += 1;
-                const playerObject = new Player_1.default(id, playerName, 0, 0, 0, 0, 1000);
+                const playerObject = new Player_1.default(id, playerName, 0, 0, 0, 0, 1000, 0, 0);
                 yield playerList.push(playerObject);
             }
         }));
@@ -113,6 +113,21 @@ function updateLastDaysProgress(playersDB, matchesDB, days) {
         }));
     });
 }
+function updateCurrentRank(playersDB) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const playersData = yield playersDB.find().sort({ presentRating: -1 }).toArray();
+        for (let index = 1; index <= playersData.length; index += 1) {
+            const player = playersData[index - 1];
+            playersDB.updateOne({
+                name: player.name,
+            }, {
+                $set: {
+                    currentRank: index,
+                },
+            });
+        }
+    });
+}
 exports.calculateMatches = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const startTime = new Date();
     yield mongodb_1.MongoClient.connect(secrets_1.mongoUrl, (_err, client) => __awaiter(this, void 0, void 0, function* () {
@@ -134,6 +149,7 @@ exports.calculateMatches = (req, res) => __awaiter(this, void 0, void 0, functio
             lastParsedMatch = `${match.date} ${match.time}`;
         })));
         yield updateLastDaysProgress(playersDB, calculatedMatchesDB, 7);
+        yield updateCurrentRank(playersDB);
         const timeElapsed = (new Date().getTime() - startTime.getTime()) / 1000;
         res.end(JSON.stringify({
             matchesProcessed: matchesData.length,
