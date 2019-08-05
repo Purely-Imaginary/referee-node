@@ -165,7 +165,29 @@ class Player {
     }
     getSkirmishesFromMatches() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.skirmishes.splice(0, this.skirmishes.length);
+            this.skirmishes = { friends: {}, enemies: {} };
+            this.matches.forEach((match) => __awaiter(this, void 0, void 0, function* () {
+                const friendIdentifier = `${match.team1.player2.name},${match.team1.player2.id}`;
+                const enemyIdentifier = `${match.team2.player1.name},${match.team2.player2.name}`;
+                if (this.skirmishes.friends[friendIdentifier] === undefined) {
+                    this.skirmishes.friends[friendIdentifier] = 1;
+                }
+                else {
+                    this.skirmishes.friends[friendIdentifier] = this.skirmishes.friends[friendIdentifier] + 1;
+                }
+                if (this.skirmishes.enemies[enemyIdentifier] === undefined) {
+                    this.skirmishes.enemies[enemyIdentifier] = 1;
+                }
+                else {
+                    this.skirmishes.enemies[enemyIdentifier] = this.skirmishes.enemies[enemyIdentifier] + 1;
+                }
+            }));
+            this.skirmishes.friends = Object.keys(this.skirmishes.friends)
+                .map(key => [key.split(',')[0], key.split(',')[1], this.skirmishes.friends[key]])
+                .sort((a, b) => ((a[2] < b[2]) ? 1 : -1));
+            this.skirmishes.enemies = Object.keys(this.skirmishes.enemies)
+                .map(key => [key.split(',')[0], key.split(',')[1], this.skirmishes.enemies[key]])
+                .sort((a, b) => ((a[2] < b[2]) ? 1 : -1));
         });
     }
     getFullData(matchesCollection) {
