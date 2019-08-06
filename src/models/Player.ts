@@ -27,12 +27,13 @@ export default class Player {
   goalsLost: number;
 
   constructor(id: number, name: string, wins: number, losses: number,
-    goalsScored: number, goalsLost: number, presentRating: number, ratingChange: number, currentRank: number) {
+    goalsScored: number, goalsLost: number, presentRating: number,
+    ratingChange: number, currentRank: number) {
     this.id = id;
     this.name = name;
     this.matches = [];
-    this.progress = [];
-    this.skirmishes = [];
+    this.progress = [{ timestamp: 0, rating: 0 }];
+    this.skirmishes = { friends: {}, enemies: {} };
     this.lastPlayed = 0;
     this.wins = wins;
     this.losses = losses;
@@ -72,6 +73,7 @@ export default class Player {
   }
 
   async changeRating(playerCollection: any, changeValue: number) {
+    this.presentRating += changeValue;
     await playerCollection.update(
       {
         name: this.name,

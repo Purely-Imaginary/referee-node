@@ -14,8 +14,8 @@ class Player {
         this.id = id;
         this.name = name;
         this.matches = [];
-        this.progress = [];
-        this.skirmishes = [];
+        this.progress = [{ timestamp: 0, rating: 0 }];
+        this.skirmishes = { friends: {}, enemies: {} };
         this.lastPlayed = 0;
         this.wins = wins;
         this.losses = losses;
@@ -52,6 +52,7 @@ class Player {
     }
     changeRating(playerCollection, changeValue) {
         return __awaiter(this, void 0, void 0, function* () {
+            this.presentRating += changeValue;
             yield playerCollection.update({
                 name: this.name,
             }, {

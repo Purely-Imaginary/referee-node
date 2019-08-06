@@ -3,7 +3,6 @@ import compression from 'compression'; // compresses requests
 import session from 'express-session';
 import bodyParser from 'body-parser';
 import lusca from 'lusca';
-import dotenv from 'dotenv';
 import mongo from 'connect-mongo';
 import flash from 'express-flash';
 import path from 'path';
@@ -15,17 +14,13 @@ import cors from 'cors';
 import { MONGODB_URI, SESSION_SECRET } from './util/secrets';
 
 // Controllers (route handlers)
-import * as homeController from './controllers/home';
 import * as userController from './controllers/user';
-import * as apiController from './controllers/api';
 import * as rankingController from './controllers/ranking';
 import * as matchesController from './controllers/matches';
 import * as toolsController from './controllers/tools';
 import * as playerController from './controllers/player';
+import * as matchController from './controllers/match';
 
-
-// API keys and Passport configuration
-import * as passportConfig from './config/passport';
 
 const MongoStore = mongo(session);
 
@@ -40,6 +35,7 @@ mongoose.Promise = bluebird;
 mongoose.connect(mongoUrl, { useNewUrlParser: true }).then(
   () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ },
 ).catch((err) => {
+  // eslint-disable-next-line no-console
   console.log(`MongoDB connection error. Please make sure MongoDB is running. ${err}`);
   // process.exit();
 });
@@ -87,35 +83,6 @@ app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
 });
-app.use((req, res, next) => {
-  // After successful login, redirect back to the intended page
-  if (!req.user
-    && req.path !== '/login'
-    && req.path !== '/signup'
-    && !req.path.match(/^\/auth/)
-    && !req.path.match(/\./)) {
-    req.session.returnTo = req.path;
-  } else if (req.user
-    && req.path == '/account') {
-    req.session.returnTo = req.path;
-  }
-  next();
-});
-
-app.use(
-  express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }),
-);
-
-/**
- * Primary app routes.
- */
-app.get('/', homeController.index);
-
-/**
- * API examples routes.
- */
-app.get('/api', apiController.getApi);
-app.get('/api/facebook', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
 
 /**
  * OAuth authentication routes. (Sign in)
@@ -137,6 +104,7 @@ app.get('/insertDataToDBFromSpreadsheet', toolsController.insertDataToDBFromSpre
 app.get('/testingController', toolsController.testingController);
 app.get('/calculateMatches', toolsController.calculateMatches);
 app.get('/player/:id', playerController.getPlayerData);
+app.get('/match/:id', matchController.getMatchData);
 
 
 export default app;

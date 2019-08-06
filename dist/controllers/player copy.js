@@ -7,23 +7,29 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongodb_1 = require("mongodb");
 const secrets_1 = require("../secrets");
+const Player_1 = __importDefault(require("../models/Player"));
 /**
- * GET /ranking
- * User ranking.
+ * GET /user/get/matches
+ * Testing endpoint
  */
-exports.getRanking = (req, res) => {
+exports.getPlayerData = (req, res) => {
+    const playerId = parseInt(req.params.id, 10);
+    if (playerId === undefined)
+        return 0;
     mongodb_1.MongoClient.connect(secrets_1.mongoUrl, (_err, client) => __awaiter(this, void 0, void 0, function* () {
         const db = client.db('referee');
-        const matchesCollection = db.collection('players');
-        const cursor = matchesCollection.find();
-        const result = yield cursor.toArray();
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(result));
+        const matchesCollection = db.collection('calculatedMatches');
+        const playersCollection = db.collection('players');
+        const playerObject = yield Player_1.default.getPlayerById(playersCollection, playerId);
+        yield playerObject.getFullData(matchesCollection);
+        res.end(JSON.stringify(playerObject));
         return 0;
     }));
-    return 0;
 };
-//# sourceMappingURL=ranking.js.map
+//# sourceMappingURL=player copy.js.map

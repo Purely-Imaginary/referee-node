@@ -24,15 +24,12 @@ const bluebird_1 = __importDefault(require("bluebird"));
 const cors_1 = __importDefault(require("cors"));
 const secrets_1 = require("./util/secrets");
 // Controllers (route handlers)
-const homeController = __importStar(require("./controllers/home"));
 const userController = __importStar(require("./controllers/user"));
-const apiController = __importStar(require("./controllers/api"));
 const rankingController = __importStar(require("./controllers/ranking"));
 const matchesController = __importStar(require("./controllers/matches"));
 const toolsController = __importStar(require("./controllers/tools"));
 const playerController = __importStar(require("./controllers/player"));
-// API keys and Passport configuration
-const passportConfig = __importStar(require("./config/passport"));
+const matchController = __importStar(require("./controllers/match"));
 const MongoStore = connect_mongo_1.default(express_session_1.default);
 // Create Express server
 const app = express_1.default();
@@ -40,6 +37,7 @@ const app = express_1.default();
 const mongoUrl = secrets_1.MONGODB_URI;
 mongoose_1.default.Promise = bluebird_1.default;
 mongoose_1.default.connect(mongoUrl, { useNewUrlParser: true }).then(() => { }).catch((err) => {
+    // eslint-disable-next-line no-console
     console.log(`MongoDB connection error. Please make sure MongoDB is running. ${err}`);
     // process.exit();
 });
@@ -84,31 +82,6 @@ app.use((req, res, next) => {
     res.locals.user = req.user;
     next();
 });
-app.use((req, res, next) => {
-    // After successful login, redirect back to the intended page
-    if (!req.user
-        && req.path !== '/login'
-        && req.path !== '/signup'
-        && !req.path.match(/^\/auth/)
-        && !req.path.match(/\./)) {
-        req.session.returnTo = req.path;
-    }
-    else if (req.user
-        && req.path == '/account') {
-        req.session.returnTo = req.path;
-    }
-    next();
-});
-app.use(express_1.default.static(path_1.default.join(__dirname, 'public'), { maxAge: 31557600000 }));
-/**
- * Primary app routes.
- */
-app.get('/', homeController.index);
-/**
- * API examples routes.
- */
-app.get('/api', apiController.getApi);
-app.get('/api/facebook', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
 /**
  * OAuth authentication routes. (Sign in)
  */
@@ -128,5 +101,6 @@ app.get('/insertDataToDBFromSpreadsheet', toolsController.insertDataToDBFromSpre
 app.get('/testingController', toolsController.testingController);
 app.get('/calculateMatches', toolsController.calculateMatches);
 app.get('/player/:id', playerController.getPlayerData);
+app.get('/match/:id', matchController.getMatchData);
 exports.default = app;
 //# sourceMappingURL=app.js.map

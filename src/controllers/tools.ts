@@ -162,8 +162,8 @@ export const calculateMatches = async (req: Request, res: Response) => {
         parseInt(match.score2, 10),
         match.league,
       );
-      await cMatch.insertToDB(db.collection('calculatedMatches'));
       await cMatch.updatePlayers(playersDB);
+      await cMatch.insertToDB(db.collection('calculatedMatches'));
       await cMatch.calculatePast(calculatedMatchesDB);
       lastParsedMatch = `${match.date} ${match.time}`;
     }));

@@ -7,131 +7,100 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const mongo = __importStar(require("mongodb"));
 class CalculatedMatch {
     constructor(date, time, timestamp, player11, player12, player21, player22, score1, score2, league) {
         this.date = date;
         this.time = time;
         this.timestamp = timestamp;
-        this.player11 = player11;
-        this.player12 = player12;
-        this.player21 = player21;
-        this.player22 = player22;
-        this.score1 = score1;
-        this.score2 = score2;
+        this.team1 = { player1: player11, player2: player12, score: score1 };
+        this.team2 = { player1: player21, player2: player22, score: score2 };
         this.league = league;
-        this.avg1elo = (player11.presentRating + player12.presentRating) / 2;
-        this.avg2elo = (player21.presentRating + player22.presentRating) / 2;
-        const difference = (this.avg1elo - this.avg2elo) / CalculatedMatch.diffCoefficient;
-        const maxScore = Math.max(this.score1, this.score2);
-        const scoreDifference = this.score1 - this.score2;
+        const avg1elo = (player11.presentRating + player12.presentRating) / 2;
+        const avg2elo = (player21.presentRating + player22.presentRating) / 2;
+        const difference = (avg1elo - avg2elo) / CalculatedMatch.diffCoefficient;
+        const maxScore = Math.max(this.team1.score, this.team2.score);
+        const scoreDifference = this.team1.score - this.team2.score;
         const estimationForTeam1 = 1 / (1 + (Math.pow(10, -difference)));
         const estimationForTeam2 = 1 / (1 + (Math.pow(10, difference)));
         const scoreCoefficient = maxScore / Math.max(estimationForTeam1, estimationForTeam2);
-        this.estimatedScoreForTeam1 = estimationForTeam1 * scoreCoefficient;
-        this.estimatedScoreForTeam2 = estimationForTeam2 * scoreCoefficient;
-        const estimatedScoreDifference = this.estimatedScoreForTeam1 - this.estimatedScoreForTeam2;
-        this.ratingChange = (CalculatedMatch.ratingChangeCoefficient / 20)
+        this.team1.estimatedScore = estimationForTeam1 * scoreCoefficient;
+        this.team2.estimatedScore = estimationForTeam2 * scoreCoefficient;
+        const estimatedScoreDifference = this.team1.estimatedScore - this.team2.estimatedScore;
+        this.team1.ratingChange = (CalculatedMatch.ratingChangeCoefficient / 20)
             * (scoreDifference - estimatedScoreDifference);
+        this.team2.ratingChange = -this.team1.ratingChange;
+        this.team1.isWon = this.team1.score > this.team2.score ? 1 : 0;
+        this.team2.isWon = this.team1.score < this.team2.score ? 1 : 0;
     }
     insertToDB(calculatedMatchCollection) {
         return __awaiter(this, void 0, void 0, function* () {
-            const didTeam1Won = this.score1 > this.score2 ? 1 : 0;
-            const didTeam2Won = this.score1 < this.score2 ? 1 : 0;
             const pastData = yield this.calculatePast(calculatedMatchCollection);
-            yield calculatedMatchCollection.insertOne({
-                date: this.date,
-                time: this.time,
-                timestamp: this.timestamp,
-                league: this.league,
-                team1: {
-                    player1: {
-                        id: this.player11.id,
-                        name: this.player11.name,
-                        presentRating: this.player11.presentRating + this.ratingChange,
-                    },
-                    player2: {
-                        id: this.player12.id,
-                        name: this.player12.name,
-                        presentRating: this.player12.presentRating + this.ratingChange,
-                    },
-                    score: this.score1,
-                    isWon: didTeam1Won,
-                    ratingChange: this.ratingChange,
-                    estimatedScore: this.estimatedScoreForTeam1,
-                    pastSummedScoreAgainstThisTeam: pastData.team1score + this.score1,
-                    pastWinsAgainstThisTeam: pastData.team1wins + didTeam1Won,
-                },
-                team2: {
-                    player1: {
-                        id: this.player21.id,
-                        name: this.player21.name,
-                        presentRating: this.player21.presentRating - this.ratingChange,
-                    },
-                    player2: {
-                        id: this.player22.id,
-                        name: this.player22.name,
-                        presentRating: this.player22.presentRating - this.ratingChange,
-                    },
-                    score: this.score2,
-                    isWon: didTeam2Won,
-                    ratingChange: -this.ratingChange,
-                    estimatedScore: this.estimatedScoreForTeam2,
-                    pastSummedScoreAgainstThisTeam: pastData.team2score + this.score2,
-                    pastWinsAgainstThisTeam: pastData.team2wins + didTeam2Won,
-                },
-            });
+            this.team1.pastSummedScoreAgainstThisTeam = pastData.team1score + this.team1.score;
+            this.team1.pastWinsAgainstThisTeam = pastData.team1wins + this.team1.isWon;
+            this.team2.pastSummedScoreAgainstThisTeam = pastData.team2score + this.team2.score;
+            this.team2.pastWinsAgainstThisTeam = pastData.team2wins + this.team2.isWon;
+            yield calculatedMatchCollection.insertOne(this);
         });
     }
     updatePlayers(playersDB) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.player11.changeRating(playersDB, this.ratingChange);
-            this.player12.changeRating(playersDB, this.ratingChange);
-            this.player21.changeRating(playersDB, -this.ratingChange);
-            this.player22.changeRating(playersDB, -this.ratingChange);
-            [this.player11, this.player12, this.player21, this.player22].forEach((player) => {
+            this.team1.player1.changeRating(playersDB, this.team1.ratingChange);
+            this.team1.player2.changeRating(playersDB, this.team1.ratingChange);
+            this.team2.player1.changeRating(playersDB, this.team2.ratingChange);
+            this.team2.player2.changeRating(playersDB, this.team2.ratingChange);
+            [this.team1.player1, this.team1.player2, this.team2.player1, this.team2.player2]
+                .forEach((player) => {
                 player.updateTime(playersDB, this.timestamp);
             });
-            if (this.score1 > this.score2) {
+            if (this.team1.score > this.team2.score) {
                 playersDB.updateMany({
                     $or: [
-                        { name: this.player11.name },
-                        { name: this.player12.name },
+                        { name: this.team1.player1.name },
+                        { name: this.team1.player2.name },
                     ],
                 }, { $inc: { wins: 1 } });
                 playersDB.updateMany({
                     $or: [
-                        { name: this.player21.name },
-                        { name: this.player22.name },
+                        { name: this.team2.player1.name },
+                        { name: this.team2.player2.name },
                     ],
                 }, { $inc: { losses: 1 } });
             }
-            if (this.score1 < this.score2) {
+            if (this.team1.score < this.team2.score) {
                 playersDB.updateMany({
                     $or: [
-                        { name: this.player11.name },
-                        { name: this.player12.name },
+                        { name: this.team1.player1.name },
+                        { name: this.team1.player2.name },
                     ],
                 }, { $inc: { losses: 1 } });
                 playersDB.updateMany({
                     $or: [
-                        { name: this.player21.name },
-                        { name: this.player22.name },
+                        { name: this.team2.player1.name },
+                        { name: this.team2.player2.name },
                     ],
                 }, { $inc: { wins: 1 } });
             }
             playersDB.updateMany({
                 $or: [
-                    { name: this.player11.name },
-                    { name: this.player12.name },
+                    { name: this.team1.player1.name },
+                    { name: this.team1.player2.name },
                 ],
-            }, { $inc: { goalsScored: this.score1, goalsLost: this.score2 } });
+            }, { $inc: { goalsScored: this.team1.score, goalsLost: this.team2.score } });
             playersDB.updateMany({
                 $or: [
-                    { name: this.player21.name },
-                    { name: this.player22.name },
+                    { name: this.team2.player1.name },
+                    { name: this.team2.player2.name },
                 ],
-            }, { $inc: { goalsScored: this.score2, goalsLost: this.score1 } });
+            }, { $inc: { goalsScored: this.team2.score, goalsLost: this.team1.score } });
         });
     }
     calculatePast(matchesDB) {
@@ -139,10 +108,10 @@ class CalculatedMatch {
             const data = matchesDB.aggregate([
                 {
                     $match: {
-                        'team1.player1.name': this.player11.name,
-                        'team1.player2.name': this.player12.name,
-                        'team2.player1.name': this.player21.name,
-                        'team2.player2.name': this.player22.name,
+                        'team1.player1.name': this.team1.player1.name,
+                        'team1.player2.name': this.team1.player2.name,
+                        'team2.player1.name': this.team2.player1.name,
+                        'team2.player2.name': this.team2.player2.name,
                     },
                 },
                 {
@@ -160,10 +129,10 @@ class CalculatedMatch {
             const data2 = matchesDB.aggregate([
                 {
                     $match: {
-                        'team1.player1.name': this.player21.name,
-                        'team1.player2.name': this.player22.name,
-                        'team2.player1.name': this.player11.name,
-                        'team2.player2.name': this.player12.name,
+                        'team1.player1.name': this.team2.player1.name,
+                        'team1.player2.name': this.team2.player2.name,
+                        'team2.player1.name': this.team1.player1.name,
+                        'team2.player2.name': this.team1.player2.name,
                     },
                 },
                 {
@@ -199,6 +168,19 @@ class CalculatedMatch {
                 team2score,
                 team2wins,
             };
+        });
+    }
+    static getMatchById(matchCollection, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const mongoObjectID = new mongo.ObjectID(id);
+            const m = yield matchCollection.findOne({ _id: mongoObjectID });
+            return m;
+        });
+    }
+    getFullData(matchesCollection) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // number of matches, list of them, progress in time, chart of goals and / or wins
+            return this;
         });
     }
 }

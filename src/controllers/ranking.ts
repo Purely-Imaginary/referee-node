@@ -1,4 +1,5 @@
 /* eslint-disable import/prefer-default-export */
+// eslint-disable-next-line no-unused-vars
 import { Response } from 'express';
 import { MongoClient } from 'mongodb';
 import { mongoUrl } from '../secrets';
@@ -18,4 +19,5 @@ export const getRanking = (req: Request, res: Response) => {
     res.end(JSON.stringify(result));
     return 0;
   });
+  return 0;
 };

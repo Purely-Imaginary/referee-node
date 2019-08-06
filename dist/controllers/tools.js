@@ -143,8 +143,8 @@ exports.calculateMatches = (req, res) => __awaiter(this, void 0, void 0, functio
         let lastParsedMatch = '';
         yield asyncForEach(matchesData, ((match) => __awaiter(this, void 0, void 0, function* () {
             const cMatch = yield new CalculatedMatch_1.default(match.date, match.time, match.timestamp, yield Player_1.default.getPlayerByName(playersDB, match.player1), yield Player_1.default.getPlayerByName(playersDB, match.player2), yield Player_1.default.getPlayerByName(playersDB, match.player3), yield Player_1.default.getPlayerByName(playersDB, match.player4), parseInt(match.score1, 10), parseInt(match.score2, 10), match.league);
-            yield cMatch.insertToDB(db.collection('calculatedMatches'));
             yield cMatch.updatePlayers(playersDB);
+            yield cMatch.insertToDB(db.collection('calculatedMatches'));
             yield cMatch.calculatePast(calculatedMatchesDB);
             lastParsedMatch = `${match.date} ${match.time}`;
         })));
