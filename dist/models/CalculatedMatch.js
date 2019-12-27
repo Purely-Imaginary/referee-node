@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -21,8 +22,14 @@ class CalculatedMatch {
         this.date = date;
         this.time = time;
         this.timestamp = timestamp;
-        this.team1 = { player1: player11, player2: player12, score: score1 };
-        this.team2 = { player1: player21, player2: player22, score: score2 };
+        this.team1 = {
+            player1: player11, player2: player12, score: score1, estimatedScore: 0,
+            isWon: 0, pastSummedScoreAgainstThisTeam: 0, pastWinsAgainstThisTeam: 0, ratingChange: 0,
+        };
+        this.team2 = {
+            player1: player21, player2: player22, score: score2, estimatedScore: 0,
+            isWon: 0, pastSummedScoreAgainstThisTeam: 0, pastWinsAgainstThisTeam: 0, ratingChange: 0,
+        };
         this.league = league;
         const avg1elo = (player11.presentRating + player12.presentRating) / 2;
         const avg2elo = (player21.presentRating + player22.presentRating) / 2;
@@ -184,8 +191,8 @@ class CalculatedMatch {
         });
     }
 }
+exports.default = CalculatedMatch;
 CalculatedMatch.diffCoefficient = 1600;
 CalculatedMatch.ratingChangeCoefficient = 100; // 100/20 = 5 pts per goal away from estimation
-exports.default = CalculatedMatch;
 module.exports = CalculatedMatch;
 //# sourceMappingURL=CalculatedMatch.js.map
