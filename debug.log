@@ -342,3 +342,131 @@
 {"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T10:05:38.331Z"}
 {"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T10:34:19.583Z"}
 {"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T10:34:19.584Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T10:51:52.929Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T10:51:52.931Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T10:51:57.699Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T10:51:57.700Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:04:05.010Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:04:05.010Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:04:48.626Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:04:48.627Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:06:34.440Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:06:34.441Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:11:51.311Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:11:51.312Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:11:52.502Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:11:52.503Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:30:18.155Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:30:18.155Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:31:02.635Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:31:02.636Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:32:06.497Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:32:06.499Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:32:18.470Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:32:18.471Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:32:57.426Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:32:57.427Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:37:09.687Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:37:09.688Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:37:11.697Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:37:11.699Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:38:48.390Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:38:48.391Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:39:11.666Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:39:11.667Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:41:01.351Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:41:01.351Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:45:10.700Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:45:10.701Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:46:02.910Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:46:02.911Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:46:35.053Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:46:35.054Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:46:54.027Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:46:54.028Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:48:27.821Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:48:27.822Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:49:13.328Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:49:13.329Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:49:38.811Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:49:38.812Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:53:44.920Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:53:44.921Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:53:46.564Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:53:46.565Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:54:33.636Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:54:33.637Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:54:48.886Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:54:48.888Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:55:25.794Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:55:25.796Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:55:40.834Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:55:40.835Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:56:12.858Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:56:12.859Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:56:30.023Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:56:30.024Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:58:59.230Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:58:59.231Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T11:59:08.474Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T11:59:08.475Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T12:02:09.523Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T12:02:09.525Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T12:02:55.959Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T12:02:55.960Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T12:05:48.717Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T12:05:48.718Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T12:06:32.794Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T12:06:32.795Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T12:07:02.672Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T12:07:02.673Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T12:07:25.242Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T12:07:25.246Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T12:21:22.378Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T12:21:22.378Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T12:21:34.929Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T12:21:34.930Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T12:22:45.200Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T12:22:45.201Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T12:22:47.072Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T12:22:47.073Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:24:43.465Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:24:43.466Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:26:15.929Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:26:15.930Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:26:40.013Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:26:40.014Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:26:48.091Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:26:48.092Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:27:03.570Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:27:03.570Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:28:34.425Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:28:34.426Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:28:42.849Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:28:42.850Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:29:01.330Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:29:01.331Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:29:52.384Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:29:52.385Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:30:39.530Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:30:39.534Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:30:53.374Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:30:53.374Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:31:34.881Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:31:34.882Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:31:55.521Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:31:55.521Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:40:38.567Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:40:38.568Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:41:42.206Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:41:42.208Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:42:13.946Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:42:13.948Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:43:40.033Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:43:40.034Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:43:59.071Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:43:59.072Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:44:39.043Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:44:39.044Z"}
+{"level":"debug","message":"Logging initialized at debug level","timestamp":"2019-12-27T13:45:02.656Z"}
+{"level":"debug","message":"Using .env.example file to supply config environment variables","timestamp":"2019-12-27T13:45:02.657Z"}

@@ -31,5 +31,6 @@ exports.getPlayerData = (req, res) => {
         res.end(JSON.stringify(playerObject));
         return 0;
     }));
+    return 0;
 };
 //# sourceMappingURL=player.js.map

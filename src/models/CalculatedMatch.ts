@@ -1,4 +1,5 @@
 import * as mongo from 'mongodb';
+// eslint-disable-next-line no-unused-vars
 import Player from './Player';
 
 export default class CalculatedMatch {
@@ -42,12 +43,24 @@ export default class CalculatedMatch {
     this.time = time;
     this.timestamp = timestamp;
     this.team1 = {
-      player1: player11, player2: player12, score: score1, estimatedScore: 0, 
-      isWon: 0, pastSummedScoreAgainstThisTeam: 0, pastWinsAgainstThisTeam: 0, ratingChange: 0,
+      player1: player11,
+      player2: player12,
+      score: score1,
+      estimatedScore: 0,
+      isWon: 0,
+      pastSummedScoreAgainstThisTeam: 0,
+      pastWinsAgainstThisTeam: 0,
+      ratingChange: 0,
     };
     this.team2 = {
-      player1: player21, player2: player22, score: score2, estimatedScore: 0, 
-      isWon: 0, pastSummedScoreAgainstThisTeam: 0, pastWinsAgainstThisTeam: 0, ratingChange: 0,
+      player1: player21,
+      player2: player22,
+      score: score2,
+      estimatedScore: 0,
+      isWon: 0,
+      pastSummedScoreAgainstThisTeam: 0,
+      pastWinsAgainstThisTeam: 0,
+      ratingChange: 0,
     };
     this.league = league;
     const avg1elo = (player11.presentRating + player12.presentRating) / 2;
@@ -236,7 +249,7 @@ export default class CalculatedMatch {
     return m;
   }
 
-  async getFullData(matchesCollection:any) {
+  async getFullData() {
     // number of matches, list of them, progress in time, chart of goals and / or wins
     return this;
   }

@@ -105,6 +105,8 @@ app.get('/testingController', toolsController.testingController);
 app.get('/calculateMatches', toolsController.calculateMatches);
 app.get('/player/:id', playerController.getPlayerData);
 app.get('/match/:id', matchController.getMatchData);
+app.get('/user/insertSample', userController.insertSampleUser);
+app.get('/user/login/:username/:password', userController.loginUser);
 
 
 export default app;
