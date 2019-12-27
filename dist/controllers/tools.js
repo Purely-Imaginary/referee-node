@@ -1,10 +1,9 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -30,11 +29,11 @@ exports.getDataFromSpreadsheet = () => new Promise(((resolve) => {
             csvdata += chunk;
         });
         // The whole response has been received. Print out the result.
-        resp.on('end', () => __awaiter(void 0, void 0, void 0, function* () {
+        resp.on('end', () => __awaiter(this, void 0, void 0, function* () {
             const data = papaparse_1.default.parse(csvdata);
             const parsedData = [];
             // eslint-disable-next-line no-restricted-syntax
-            data.data.forEach((match) => __awaiter(void 0, void 0, void 0, function* () {
+            data.data.forEach((match) => __awaiter(this, void 0, void 0, function* () {
                 // eslint-disable-next-line no-continue
                 if (match[0] === 'Date')
                     return;
@@ -62,7 +61,7 @@ exports.getDataFromSpreadsheet = () => new Promise(((resolve) => {
         }));
     });
 }));
-exports.insertDataToDBFromSpreadsheet = (db) => __awaiter(void 0, void 0, void 0, function* () {
+exports.insertDataToDBFromSpreadsheet = (db) => __awaiter(this, void 0, void 0, function* () {
     const value = yield exports.getDataFromSpreadsheet();
     yield db.collection('rawMatches').drop();
     yield db.createCollection('rawMatches');
@@ -77,16 +76,16 @@ function containsPlayer(name, array) {
     }
     return false;
 }
-exports.generatePlayersFromRawMatches = (db) => __awaiter(void 0, void 0, void 0, function* () {
+exports.generatePlayersFromRawMatches = (db) => __awaiter(this, void 0, void 0, function* () {
     const matchesDB = db.collection('rawMatches').find().sort({ date: 1, time: 1 });
     const matchesData = yield matchesDB.toArray();
     const playerList = [];
     let id = 0;
     yield db.dropCollection('players');
     yield db.createCollection('players');
-    yield matchesData.forEach((match) => __awaiter(void 0, void 0, void 0, function* () {
+    yield matchesData.forEach((match) => __awaiter(this, void 0, void 0, function* () {
         const players = [match.player1, match.player2, match.player3, match.player4];
-        yield players.forEach((playerName) => __awaiter(void 0, void 0, void 0, function* () {
+        yield players.forEach((playerName) => __awaiter(this, void 0, void 0, function* () {
             if (!containsPlayer(playerName, playerList)) {
                 id += 1;
                 const playerObject = new Player_1.default(id, playerName, 0, 0, 0, 0, 1000, 0, 0);
@@ -94,7 +93,7 @@ exports.generatePlayersFromRawMatches = (db) => __awaiter(void 0, void 0, void 0
             }
         }));
     }));
-    yield playerList.forEach((player) => __awaiter(void 0, void 0, void 0, function* () {
+    yield playerList.forEach((player) => __awaiter(this, void 0, void 0, function* () {
         yield player.insertToDB(db.collection('players'));
     }));
 });
@@ -129,9 +128,9 @@ function updateCurrentRank(playersDB) {
         }
     });
 }
-exports.calculateMatches = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.calculateMatches = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const startTime = new Date();
-    yield mongodb_1.MongoClient.connect(secrets_1.mongoUrl, (_err, client) => __awaiter(void 0, void 0, void 0, function* () {
+    yield mongodb_1.MongoClient.connect(secrets_1.mongoUrl, (_err, client) => __awaiter(this, void 0, void 0, function* () {
         const db = client.db('referee');
         const insertedMatches = yield exports.insertDataToDBFromSpreadsheet(db);
         yield exports.generatePlayersFromRawMatches(db);
@@ -142,7 +141,7 @@ exports.calculateMatches = (req, res) => __awaiter(void 0, void 0, void 0, funct
         yield db.createCollection('calculatedMatches');
         const calculatedMatchesDB = db.collection('calculatedMatches');
         let lastParsedMatch = '';
-        yield asyncForEach(matchesData, ((match) => __awaiter(void 0, void 0, void 0, function* () {
+        yield asyncForEach(matchesData, ((match) => __awaiter(this, void 0, void 0, function* () {
             const cMatch = yield new CalculatedMatch_1.default(match.date, match.time, match.timestamp, yield Player_1.default.getPlayerByName(playersDB, match.player1), yield Player_1.default.getPlayerByName(playersDB, match.player2), yield Player_1.default.getPlayerByName(playersDB, match.player3), yield Player_1.default.getPlayerByName(playersDB, match.player4), parseInt(match.score1, 10), parseInt(match.score2, 10), match.league);
             yield cMatch.updatePlayers(playersDB);
             yield cMatch.insertToDB(db.collection('calculatedMatches'));
@@ -160,8 +159,8 @@ exports.calculateMatches = (req, res) => __awaiter(void 0, void 0, void 0, funct
         }));
     }));
 });
-exports.testingController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield mongodb_1.MongoClient.connect(secrets_1.mongoUrl, (_err, client) => __awaiter(void 0, void 0, void 0, function* () {
+exports.testingController = (req, res) => __awaiter(this, void 0, void 0, function* () {
+    yield mongodb_1.MongoClient.connect(secrets_1.mongoUrl, (_err, client) => __awaiter(this, void 0, void 0, function* () {
         const db = client.db('referee');
         const matchesDB = db.collection('calculatedMatches');
         const playersDB = db.collection('players');
